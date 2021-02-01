@@ -1,5 +1,6 @@
 import { CloseCircleOutlined } from '@ant-design/icons';
-import { Button, Card, Col, DatePicker, Form, Input, Popover, Row, Select, TimePicker } from 'antd';
+import { Button, Card, Col, DatePicker, Form, Input, Popover, Row, Select, TimePicker, Checkbox,
+         InputNumber} from 'antd';
 import React, { FC, useState } from 'react';
 import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
 import { connect, Dispatch } from 'umi';
@@ -12,6 +13,18 @@ const { Option } = Select;
 const { RangePicker } = DatePicker;
 
 const fieldLabels = {
+  address: '节点地址',
+  mode: '模式',
+  role: '角色',
+  antennaMode: '天线波束',
+  continuousTransceiveEnable: '启用中频连发',
+  gpsEnable: '启用秒脉冲同步',
+  costasEnable: '启用costa环路',
+  impulseEnable: '启用冲激响应',
+  bigAntennaEnable: '启用大天线',
+  bitErrorEnable: '启用误码率统计',
+  checkGPIOEnable: '启用引脚状态检测',
+  testPacketNum: '测试报文数量',
   name: '仓库名',
   url: '仓库域名',
   owner: '仓库管理员',
@@ -29,18 +42,35 @@ const fieldLabels = {
 const tableData = [
   {
     key: '1',
+    slotIndex: '1',
     workId: '00001',
     name: 'John Brown',
     department: 'New York No. 1 Lake Park',
   },
   {
     key: '2',
+    slotIndex: '2',
     workId: '00002',
     name: 'Jim Green',
     department: 'London No. 1 Lake Park',
   },
   {
     key: '3',
+    slotIndex: '3',
+    workId: '00003',
+    name: 'Joe Black',
+    department: 'Sidney No. 1 Lake Park',
+  },
+  {
+    key: '4',
+    slotIndex: '4',
+    workId: '00003',
+    name: 'Joe Black',
+    department: 'Sidney No. 1 Lake Park',
+  },
+  {
+    key: '5',
+    slotIndex: '5',
     workId: '00003',
     name: 'Joe Black',
     department: 'Sidney No. 1 Lake Park',
@@ -126,160 +156,111 @@ const AdvancedForm: FC<AdvancedFormProps> = ({ submitting, dispatch }) => {
       onFinish={onFinish}
       onFinishFailed={onFinishFailed}
     >
-      <PageContainer content="高级表单常见于一次性输入和提交大批量数据的场景。">
-        <Card title="仓库管理" className={styles.card} bordered={false}>
+      <PageContainer content="">
+        <Card title="协议栈配置" className={styles.card} bordered={false}>
           <Row gutter={16}>
-            <Col lg={6} md={12} sm={24}>
+            <Col lg={{ span: 5}} md={12} sm={24}>
               <Form.Item
-                label={fieldLabels.name}
-                name="name"
-                rules={[{ required: true, message: '请输入仓库名称' }]}
+                label={fieldLabels.address}
+                name="address"
+                rules={[{ required: true, message: '请选择节点地址' }]}
               >
-                <Input placeholder="请输入仓库名称" />
+                <Select placeholder="请选择节点地址">
+                  <Option value="1">1</Option>
+                  <Option value="2">2</Option>
+                  <Option value="3">3</Option>
+                </Select>
               </Form.Item>
             </Col>
-            <Col xl={{ span: 6, offset: 2 }} lg={{ span: 8 }} md={{ span: 12 }} sm={24}>
+            <Col xl={{ span: 5, offset: 1 }} lg={{ span: 4 }} md={{ span: 12 }} sm={24}>
               <Form.Item
-                label={fieldLabels.url}
-                name="url"
+                label={fieldLabels.mode}
+                name="mode"
                 rules={[{ required: true, message: '请选择' }]}
               >
-                <Input
-                  style={{ width: '100%' }}
-                  addonBefore="http://"
-                  addonAfter=".com"
-                  placeholder="请输入"
-                />
+                <Select placeholder="请选择模式">
+                  <Option value="2">V段速率测试</Option>
+                  <Option value="3">V段报文测试</Option>
+                  <Option value="6">绘制冲激响应</Option>
+                </Select>
               </Form.Item>
             </Col>
-            <Col xl={{ span: 8, offset: 2 }} lg={{ span: 10 }} md={{ span: 24 }} sm={24}>
+            <Col xl={{ span: 5, offset: 1 }} lg={{ span: 4 }} md={{ span: 24 }} sm={24}>
               <Form.Item
-                label={fieldLabels.owner}
-                name="owner"
-                rules={[{ required: true, message: '请选择管理员' }]}
+                label={fieldLabels.role}
+                name="role"
+                rules={[{ required: true, message: '请选择角色' }]}
               >
-                <Select placeholder="请选择管理员">
-                  <Option value="xiao">付晓晓</Option>
-                  <Option value="mao">周毛毛</Option>
+                <Select placeholder="请选择角色">
+                  <Option value="0">双向通信</Option>
+                  <Option value="1">单向发送</Option>
+                  <Option value="2">单向接收</Option>
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col xl={{ span: 5, offset: 1 }} lg={{ span: 4 }} md={{ span: 24 }} sm={24}>
+              <Form.Item
+                label={fieldLabels.antennaMode}
+                name="antennaMode"
+                rules={[{ required: true, message: '请选择天线模式' }]}
+              >
+                <Select placeholder="请选择天线模式">
+                  <Option value="1">窄波束</Option>
+                  <Option value="2">宽波束</Option>
                 </Select>
               </Form.Item>
             </Col>
           </Row>
           <Row gutter={16}>
-            <Col lg={6} md={12} sm={24}>
+            <Col lg={5} md={12} sm={24}>
               <Form.Item
-                label={fieldLabels.approver}
-                name="approver"
-                rules={[{ required: true, message: '请选择审批员' }]}
-              >
-                <Select placeholder="请选择审批员">
-                  <Option value="xiao">付晓晓</Option>
-                  <Option value="mao">周毛毛</Option>
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col xl={{ span: 6, offset: 2 }} lg={{ span: 8 }} md={{ span: 12 }} sm={24}>
-              <Form.Item
-                label={fieldLabels.dateRange}
-                name="dateRange"
-                rules={[{ required: true, message: '请选择生效日期' }]}
-              >
-                <RangePicker placeholder={['开始日期', '结束日期']} style={{ width: '100%' }} />
-              </Form.Item>
-            </Col>
-            <Col xl={{ span: 8, offset: 2 }} lg={{ span: 10 }} md={{ span: 24 }} sm={24}>
-              <Form.Item
-                label={fieldLabels.type}
-                name="type"
-                rules={[{ required: true, message: '请选择仓库类型' }]}
-              >
-                <Select placeholder="请选择仓库类型">
-                  <Option value="private">私密</Option>
-                  <Option value="public">公开</Option>
-                </Select>
+                label={fieldLabels.testPacketNum}
+                name="testPacketNum"
+                rules={[{ required: true, message: '请输入' }]}
+              > 
+                <InputNumber 
+                  placeholder="请输入测试报文数量" size="middle" step={1}
+                  style={{ width: '100%' }}
+                />
               </Form.Item>
             </Col>
           </Row>
         </Card>
-        <Card title="任务管理" className={styles.card} bordered={false}>
+        <Card title="选项配置" className={styles.card} bordered={false}>
           <Row gutter={16}>
-            <Col lg={6} md={12} sm={24}>
-              <Form.Item
-                label={fieldLabels.name2}
-                name="name2"
-                rules={[{ required: true, message: '请输入' }]}
-              >
-                <Input placeholder="请输入" />
+            <Col lg={4} md={12} sm={24}>
+              <Form.Item name="bigAntennaEnable">
+                <Checkbox>{fieldLabels.bigAntennaEnable}</Checkbox>
               </Form.Item>
             </Col>
-            <Col xl={{ span: 6, offset: 2 }} lg={{ span: 8 }} md={{ span: 12 }} sm={24}>
-              <Form.Item
-                label={fieldLabels.url2}
-                name="url2"
-                rules={[{ required: true, message: '请选择' }]}
-              >
-                <Input placeholder="请输入" />
+            <Col xl={{ span: 4 }} lg={{ span: 4 }} md={{ span: 12 }} sm={24}>
+              <Form.Item name="continuousTransceiveEnable">
+                <Checkbox>{fieldLabels.continuousTransceiveEnable}</Checkbox>
               </Form.Item>
             </Col>
-            <Col xl={{ span: 8, offset: 2 }} lg={{ span: 10 }} md={{ span: 24 }} sm={24}>
-              <Form.Item
-                label={fieldLabels.owner2}
-                name="owner2"
-                rules={[{ required: true, message: '请选择管理员' }]}
-              >
-                <Select placeholder="请选择管理员">
-                  <Option value="xiao">付晓晓</Option>
-                  <Option value="mao">周毛毛</Option>
-                </Select>
+            <Col xl={{ span: 4 }} lg={{ span: 4 }} md={{ span: 12 }} sm={24}>
+              <Form.Item name="costasLoopEnable">
+                <Checkbox>{fieldLabels.costasEnable}</Checkbox>
               </Form.Item>
             </Col>
-          </Row>
-          <Row gutter={16}>
-            <Col lg={6} md={12} sm={24}>
-              <Form.Item
-                label={fieldLabels.approver2}
-                name="approver2"
-                rules={[{ required: true, message: '请选择审批员' }]}
-              >
-                <Select placeholder="请选择审批员">
-                  <Option value="xiao">付晓晓</Option>
-                  <Option value="mao">周毛毛</Option>
-                </Select>
+            <Col xl={{ span: 4 }} lg={{ span: 4 }} md={{ span: 12 }} sm={24}>
+              <Form.Item name="impulseEnable">
+                <Checkbox>{fieldLabels.impulseEnable}</Checkbox>
               </Form.Item>
             </Col>
-            <Col xl={{ span: 6, offset: 2 }} lg={{ span: 8 }} md={{ span: 12 }} sm={24}>
-              <Form.Item
-                label={fieldLabels.dateRange2}
-                name="dateRange2"
-                rules={[{ required: true, message: '请输入' }]}
-              >
-                <TimePicker
-                  placeholder="提醒时间"
-                  style={{ width: '100%' }}
-                  getPopupContainer={(trigger) => {
-                    if (trigger && trigger.parentNode) {
-                      return trigger.parentNode as HTMLElement;
-                    }
-                    return trigger;
-                  }}
-                />
+            <Col xl={{ span: 4 }} lg={{ span: 4 }} md={{ span: 12 }} sm={24}>
+              <Form.Item name="bitErrorEnable">
+                <Checkbox>{fieldLabels.bitErrorEnable}</Checkbox>
               </Form.Item>
             </Col>
-            <Col xl={{ span: 8, offset: 2 }} lg={{ span: 10 }} md={{ span: 24 }} sm={24}>
-              <Form.Item
-                label={fieldLabels.type2}
-                name="type2"
-                rules={[{ required: true, message: '请选择仓库类型' }]}
-              >
-                <Select placeholder="请选择仓库类型">
-                  <Option value="private">私密</Option>
-                  <Option value="public">公开</Option>
-                </Select>
+            <Col xl={{ span: 4 }} lg={{ span: 4 }} md={{ span: 12 }} sm={24}>
+              <Form.Item name="checkGPIOEnable">
+                <Checkbox>{fieldLabels.checkGPIOEnable}</Checkbox>
               </Form.Item>
             </Col>
           </Row>
         </Card>
-        <Card title="成员管理" bordered={false}>
+        <Card title="时隙管理" bordered={false}>
           <Form.Item name="members">
             <TableForm />
           </Form.Item>
@@ -287,8 +268,11 @@ const AdvancedForm: FC<AdvancedFormProps> = ({ submitting, dispatch }) => {
       </PageContainer>
       <FooterToolbar>
         {getErrorInfo(error)}
+        <Button type="primary" style={{background: 'green'}} onClick={()=>{}}>
+          读取配置
+        </Button>
         <Button type="primary" onClick={() => form?.submit()} loading={submitting}>
-          提交
+          更新配置
         </Button>
       </FooterToolbar>
     </Form>
