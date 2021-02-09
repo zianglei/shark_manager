@@ -11,10 +11,10 @@ import TagCloud from './TagCloud';
 import TimelineChart from './TimelineChart';
 import WaterWave from './WaterWave';
 
-const yuan = (val: number | string) => `¥ ${numeral(val).format('0,0')}`;
+const celsius = (val: number | string) => `${numeral(val).format('0,0')} °C`;
 
 const Charts = {
-  yuan,
+  celsius,
   Bar,
   Pie,
   Gauge,
@@ -30,7 +30,7 @@ const Charts = {
 
 export {
   Charts as default,
-  yuan,
+  celsius,
   Bar,
   Pie,
   Gauge,

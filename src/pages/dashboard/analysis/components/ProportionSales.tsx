@@ -5,7 +5,7 @@ import { RadioChangeEvent } from 'antd/es/radio';
 import React from 'react';
 import { VisitDataType } from '../data.d';
 import { Pie } from './Charts';
-import Yuan from '../utils/Yuan';
+import Yuan from '../utils/celsius';
 import styles from '../style.less';
 
 const ProportionSales = ({

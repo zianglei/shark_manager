@@ -25,55 +25,29 @@ const fieldLabels = {
   bitErrorEnable: '启用误码率统计',
   checkGPIOEnable: '启用引脚状态检测',
   testPacketNum: '测试报文数量',
-  name: '仓库名',
-  url: '仓库域名',
-  owner: '仓库管理员',
-  approver: '审批人',
-  dateRange: '生效日期',
-  type: '仓库类型',
-  name2: '任务名',
-  url2: '任务描述',
-  owner2: '执行人',
-  approver2: '责任人',
-  dateRange2: '生效日期',
-  type2: '任务类型',
+
 };
 
 const tableData = [
   {
     key: '1',
     slotIndex: '1',
-    workId: '00001',
-    name: 'John Brown',
-    department: 'New York No. 1 Lake Park',
   },
   {
     key: '2',
     slotIndex: '2',
-    workId: '00002',
-    name: 'Jim Green',
-    department: 'London No. 1 Lake Park',
   },
   {
     key: '3',
     slotIndex: '3',
-    workId: '00003',
-    name: 'Joe Black',
-    department: 'Sidney No. 1 Lake Park',
   },
   {
     key: '4',
     slotIndex: '4',
-    workId: '00003',
-    name: 'Joe Black',
-    department: 'Sidney No. 1 Lake Park',
   },
   {
     key: '5',
     slotIndex: '5',
-    workId: '00003',
-    name: 'Joe Black',
-    department: 'Sidney No. 1 Lake Park',
   },
 ];
 
@@ -138,7 +112,7 @@ const AdvancedForm: FC<AdvancedFormProps> = ({ submitting, dispatch }) => {
   const onFinish = (values: { [key: string]: any }) => {
     setError([]);
     dispatch({
-      type: 'formAndadvancedForm/submitAdvancedForm',
+      type: 'configForm/submitConfig',
       payload: values,
     });
   };
@@ -152,7 +126,7 @@ const AdvancedForm: FC<AdvancedFormProps> = ({ submitting, dispatch }) => {
       form={form}
       layout="vertical"
       hideRequiredMark
-      initialValues={{ members: tableData }}
+      initialValues={{ slots: tableData }}
       onFinish={onFinish}
       onFinishFailed={onFinishFailed}
     >
@@ -166,9 +140,9 @@ const AdvancedForm: FC<AdvancedFormProps> = ({ submitting, dispatch }) => {
                 rules={[{ required: true, message: '请选择节点地址' }]}
               >
                 <Select placeholder="请选择节点地址">
-                  <Option value="1">1</Option>
-                  <Option value="2">2</Option>
-                  <Option value="3">3</Option>
+                  <Option value={1}>1</Option>
+                  <Option value={2}>2</Option>
+                  <Option value={3}>3</Option>
                 </Select>
               </Form.Item>
             </Col>
@@ -179,9 +153,9 @@ const AdvancedForm: FC<AdvancedFormProps> = ({ submitting, dispatch }) => {
                 rules={[{ required: true, message: '请选择' }]}
               >
                 <Select placeholder="请选择模式">
-                  <Option value="2">V段速率测试</Option>
-                  <Option value="3">V段报文测试</Option>
-                  <Option value="6">绘制冲激响应</Option>
+                  <Option value={2}>V段速率测试</Option>
+                  <Option value={3}>V段报文测试</Option>
+                  <Option value={6}>绘制冲激响应</Option>
                 </Select>
               </Form.Item>
             </Col>
@@ -192,9 +166,9 @@ const AdvancedForm: FC<AdvancedFormProps> = ({ submitting, dispatch }) => {
                 rules={[{ required: true, message: '请选择角色' }]}
               >
                 <Select placeholder="请选择角色">
-                  <Option value="0">双向通信</Option>
-                  <Option value="1">单向发送</Option>
-                  <Option value="2">单向接收</Option>
+                  <Option value={0}>双向通信</Option>
+                  <Option value={1}>单向发送</Option>
+                  <Option value={2}>单向接收</Option>
                 </Select>
               </Form.Item>
             </Col>
@@ -205,8 +179,8 @@ const AdvancedForm: FC<AdvancedFormProps> = ({ submitting, dispatch }) => {
                 rules={[{ required: true, message: '请选择天线模式' }]}
               >
                 <Select placeholder="请选择天线模式">
-                  <Option value="1">窄波束</Option>
-                  <Option value="2">宽波束</Option>
+                  <Option value={1}>窄波束</Option>
+                  <Option value={2}>宽波束</Option>
                 </Select>
               </Form.Item>
             </Col>
@@ -261,7 +235,7 @@ const AdvancedForm: FC<AdvancedFormProps> = ({ submitting, dispatch }) => {
           </Row>
         </Card>
         <Card title="时隙管理" bordered={false}>
-          <Form.Item name="members">
+          <Form.Item name="slots">
             <TableForm />
           </Form.Item>
         </Card>
@@ -280,5 +254,5 @@ const AdvancedForm: FC<AdvancedFormProps> = ({ submitting, dispatch }) => {
 };
 
 export default connect(({ loading }: { loading: { effects: { [key: string]: boolean } } }) => ({
-  submitting: loading.effects['formAndadvancedForm/submitAdvancedForm'],
+  submitting: loading.effects['configForm/submitConfig'],
 }))(AdvancedForm);

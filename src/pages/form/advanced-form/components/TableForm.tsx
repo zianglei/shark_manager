@@ -8,11 +8,8 @@ const { Option } = Select;
 
 interface TableFormDateType {
   key: string;
-  workId?: string;
-  name?: string;
-  department?: string;
-  isNew?: boolean;
-  editable?: boolean;
+  sender: string;
+  receiver: string;
 }
 interface TableFormProps {
   value?: TableFormDateType[];
@@ -26,8 +23,8 @@ const TableForm: FC<TableFormProps> = ({ value, onChange }) => {
   // const [cacheOriginData, setCacheOriginData] = useState({});
   const [data, setData] = useState(value);
 
-  // const getRowByKey = (key: string, newData?: TableFormDateType[]) =>
-  //   (newData || data)?.filter((item) => item.key === key)[0];
+  const getRowByKey = (key: string, newData?: TableFormDateType[]) =>
+    (newData || data)?.filter((item) => item.key === key)[0];
 
   // const toggleEditable = (e: React.MouseEvent | React.KeyboardEvent, key: string) => {
   //   e.preventDefault();
@@ -67,18 +64,18 @@ const TableForm: FC<TableFormProps> = ({ value, onChange }) => {
   //   }
   // };
 
-  // const handleFieldChange = (
-  //   e: React.ChangeEvent<HTMLInputElement>,
-  //   fieldName: string,
-  //   key: string,
-  // ) => {
-  //   const newData = [...(data as TableFormDateType[])];
-  //   const target = getRowByKey(key, newData);
-  //   if (target) {
-  //     target[fieldName] = e.target.value;
-  //     setData(newData);
-  //   }
-  // };
+  const handleFieldChange = (
+    e: string | number | LabeledValue,
+    fieldName: string,
+    key: string,
+  ) => {
+    const newData = [...(data as TableFormDateType[])];
+    const target = getRowByKey(key, newData);
+    if (target) {
+      target[fieldName] = e;
+      setData(newData);
+    }
+  };
 
   // const saveRow = (e: React.MouseEvent | React.KeyboardEvent, key: string) => {
   //   e.persist();
@@ -152,17 +149,12 @@ const TableForm: FC<TableFormProps> = ({ value, onChange }) => {
       width: '20%',
       render: (text: string, record: TableFormDateType) => {
           return (
-            <Select style={{ width: '80%' }}>
-              <Option value="1">节点1</Option>
-              <Option value="2">节点2</Option>
-              <Option value="3">节点3</Option>
+            <Select style={{ width: '80%' }} 
+                    onSelect={(e, option) => handleFieldChange(e, 'sender', record.key)}>
+              <Option value={1}>节点1</Option>
+              <Option value={2}>节点2</Option>
+              <Option value={3}>节点3</Option>
             </Select>
-            // <Input
-            //   value={text}
-            //   onChange={(e) => handleFieldChange(e, 'workId', record.key)}
-            //   onKeyPress={(e) => handleKeyPress(e, record.key)}
-            //   placeholder="工号"
-            // />
           );
       },
     },
@@ -173,10 +165,12 @@ const TableForm: FC<TableFormProps> = ({ value, onChange }) => {
       width: '20%',
       render: (text: string, record: TableFormDateType) => {
         return (
-          <Select style={{ width: '80%' }}>
-            <Option value="1">节点1</Option>
-            <Option value="2">节点2</Option>
-            <Option value="3">节点3</Option>
+          <Select 
+            style={{ width: '80%' }}
+            onSelect={(e, option) => handleFieldChange(e, 'receiver', record.key)}>
+            <Option value={1}>节点1</Option>
+            <Option value={2}>节点2</Option>
+            <Option value={3}>节点3</Option>
           </Select>
         );
       },

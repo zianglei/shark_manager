@@ -1,7 +1,7 @@
 export default {
   'dashboardandanalysis.analysis.test': '工专路 {no} 号店',
   'dashboardandanalysis.analysis.introduce': '指标说明',
-  'dashboardandanalysis.analysis.total-sales': '总销售额',
+  'dashboardandanalysis.analysis.temperature': '运行温度',
   'dashboardandanalysis.analysis.day-sales': '日销售额',
   'dashboardandanalysis.analysis.visits': '访问量',
   'dashboardandanalysis.analysis.visits-trend': '访问量趋势',
@@ -9,7 +9,8 @@ export default {
   'dashboardandanalysis.analysis.day-visits': '日访问量',
   'dashboardandanalysis.analysis.week': '周同比',
   'dashboardandanalysis.analysis.day': '日同比',
-  'dashboardandanalysis.analysis.payments': '支付笔数',
+  'dashboardandanalysis.analysis.packet-sent': '发送报文个数',
+  'dashboardandanalysis.analysis.packet-recv': '接收报文个数',
   'dashboardandanalysis.analysis.conversion-rate': '转化率',
   'dashboardandanalysis.analysis.operational-effect': '运营活动效果',
   'dashboardandanalysis.analysis.sales-trend': '销售趋势',
