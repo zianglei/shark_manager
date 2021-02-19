@@ -80,6 +80,12 @@ export default defineConfig({
               component: './form/advanced-form',
             },
             {
+              path: '/firmware',
+              icon: 'upload',
+              name: 'firmware',
+              component: './firmware'
+            },
+            {
               path: '/dashboard',
               name: 'dashboard',
               icon: 'dashboard',

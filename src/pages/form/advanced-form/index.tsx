@@ -1,11 +1,12 @@
 import { CloseCircleOutlined } from '@ant-design/icons';
 import { Button, Card, Col, DatePicker, Form, Input, Popover, Row, Select, TimePicker, Checkbox,
          InputNumber} from 'antd';
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
 import { connect, Dispatch } from 'umi';
 import TableForm from './components/TableForm';
 import styles from './style.less';
+import { ConfigData } from './model'
 
 type InternalNamePath = (string | number)[];
 
@@ -52,7 +53,9 @@ const tableData = [
 ];
 
 interface AdvancedFormProps {
+  configForm: ConfigData,
   dispatch: Dispatch<any>;
+  getting: boolean;
   submitting: boolean;
 }
 
@@ -61,9 +64,13 @@ interface ErrorField {
   errors: string[];
 }
 
-const AdvancedForm: FC<AdvancedFormProps> = ({ submitting, dispatch }) => {
+const AdvancedForm: FC<AdvancedFormProps> = ({ configForm, submitting, getting, dispatch }) => {
   const [form] = Form.useForm();
   const [error, setError] = useState<ErrorField[]>([]);
+  const {
+    address
+  } = configForm;
+
   const getErrorInfo = (errors: ErrorField[]) => {
     const errorCount = errors.filter((item) => item.errors.length > 0).length;
     if (!errors || errorCount === 0) {
@@ -120,6 +127,12 @@ const AdvancedForm: FC<AdvancedFormProps> = ({ submitting, dispatch }) => {
   const onFinishFailed = (errorInfo: any) => {
     setError(errorInfo.errorFields);
   };
+
+  useEffect(() => {
+    form.setFieldsValue({
+      ...configForm
+    })
+  })
 
   return (
     <Form
@@ -194,6 +207,7 @@ const AdvancedForm: FC<AdvancedFormProps> = ({ submitting, dispatch }) => {
               > 
                 <InputNumber 
                   placeholder="请输入测试报文数量" size="middle" step={1}
+                  value = {configForm.testPacketNum}
                   style={{ width: '100%' }}
                 />
               </Form.Item>
@@ -242,7 +256,13 @@ const AdvancedForm: FC<AdvancedFormProps> = ({ submitting, dispatch }) => {
       </PageContainer>
       <FooterToolbar>
         {getErrorInfo(error)}
-        <Button type="primary" style={{background: 'green'}} onClick={()=>{}}>
+        <Button type="primary" style={{background: 'green'}} 
+          onClick={()=>{
+            dispatch({
+              type: 'configForm/getConfig'
+            })
+          }} 
+          loading={getting}>
           读取配置
         </Button>
         <Button type="primary" onClick={() => form?.submit()} loading={submitting}>
@@ -253,6 +273,12 @@ const AdvancedForm: FC<AdvancedFormProps> = ({ submitting, dispatch }) => {
   );
 };
 
-export default connect(({ loading }: { loading: { effects: { [key: string]: boolean } } }) => ({
+export default connect(({ configForm, loading }: 
+  { 
+    configForm: any;
+    loading: { effects: { [key: string]: boolean } } 
+  }) => ({
+  configForm,
+  getting: loading.effects['configForm/getConfig'],
   submitting: loading.effects['configForm/submitConfig'],
 }))(AdvancedForm);

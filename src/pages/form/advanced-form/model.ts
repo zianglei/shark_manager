@@ -1,11 +1,30 @@
-import { Effect } from 'umi';
+import { Effect, Reducer } from 'umi';
 import { message } from 'antd';
-import { submitConfigRequest } from './service';
+import { getConfigRequest, submitConfigRequest } from './service';
+
+export interface ConfigData {
+  address: number,
+  mode: number,
+  role: number,
+  antennaMode: number,
+  continuousTransceiveEnable: boolean,
+  gpsEnable: boolean,
+  costasEnable: boolean,
+  impulseEnable: boolean,
+  bigAntennaEnable: boolean, 
+  bitErrorEnable: boolean,
+  checkGPIOEnable: boolean,
+  testPacketNum: number
+}
 
 export interface ModelType {
   namespace: string;
   state: {};
+  reducers: {
+    loadConfig : Reducer<ConfigData>;
+  };
   effects: {
+    getConfig: Effect;
     submitConfig: Effect;
   };
 }
@@ -15,30 +34,45 @@ const Model: ModelType = {
 
   state: {},
 
-  effects: {
-    *submitConfig({ payload }, { call }) {
-      // 生成json
-      var jsonPayload: any = {
-        "stack": {
-          "address": payload.address, 
-          "mode": payload.mode, 
-          "role": payload.role, 
-          "antennaMode": payload.mode
-        },
-        "test": {
-          "packet_num": payload.testPacketNum
-        },
-        "vband": {
-          "slot0": (payload.slots[0].sender << 4) | (payload.slots[0].receiver),
-          "slot1": (payload.slots[1].sender << 4) | (payload.slots[1].receiver),
-          "slot2": (payload.slots[2].sender << 4) | (payload.slots[2].receiver),
-          "slot3": (payload.slots[3].sender << 4) | (payload.slots[3].receiver),
-          "slot4": (payload.slots[4].sender << 4) | (payload.slots[4].receiver)
-        }
+  reducers: {
+    loadConfig(state, { payload }) {
+      return {
+        ...payload
       }
-      console.log(jsonPayload);
-      yield call(submitConfigRequest, jsonPayload);
-      message.success('提交配置成功');
+    }
+  },
+
+  effects: {
+    *getConfig(_, { call, put }) {
+      // 获取现在的配置信息
+      const response = yield call(getConfigRequest);
+      console.log(response)
+      const status = {
+        address: response.stack.address,
+        mode: response.stack.mode,
+        role: response.stack.role,
+        antennaMode: response.stack.antennaMode,
+        continuousTransceiveEnable: response.stack.continuous_transceive,
+        gpsEnable: response.stack.gps_enable,
+        costasEnable: response.stack.costas_loop_enable,
+        impulseEnable: response.stack.impulse_response_enable,
+        bigAntennaEnable: response.stack.big_antenna_enable, 
+        bitErrorEnable: response.stack.bit_err_count_enable,
+        checkGPIOEnable: response.stack.check_fpga_enable,
+        testPacketNum: response.test.packet_num
+      }
+      yield put({
+        type: 'loadConfig',
+        payload: status
+      });
+    },
+    *submitConfig({ payload }, { call }) {
+      const {error} = yield call(submitConfigRequest, payload);
+      if (error) {
+        message.error('提交配置失败');
+      } else {
+        message.success('提交配置成功');
+      }
     },
   },
 };
