@@ -9,25 +9,28 @@ interface FirmwareProps {
 }
 
 const Firmware: FC<FirmwareProps> = ({firmware, dispatch}) => {
-    let zynqFileIsUploading = false, fpgaFileisUploading = false;
+    let zynqFileIsUploading = false, fpgaFileIsUploading = false;
     const fpgaProps = {
         name: 'ultrascale_baseband_top.bit',
-        action: '/api/firmware/fpga',
-        onChange: (info) => {
-            // if (info.file.status !== 'uploading') {
-            //   console.log(info.file, info.fileList);
-            // }
-            if (info.file.status === 'done') {
+        onChange(info) {
+            if (info.file.status === 'done' && fpgaFileIsUploading) {
               message.success(`${info.file.name} 更新成功`);
+              fpgaFileIsUploading = false;
             } else if (info.file.status === 'error') {
               message.error(`${info.file.name} 更新失败`);
             }
-          },
+        },
+        customRequest: (options) => {
+            fpgaFileIsUploading = true;
+            dispatch({
+                type: 'firmware/uploadUltrascaleFirmware',
+                payload: options
+            }) 
+        }
     }
 
     const zynqProps = {
         name: 'fpga.bit',
-        action: '/api/firmware/zynq',
         onChange(info) {
             if (info.file.status === 'done' && zynqFileIsUploading) {
               message.success(`${info.file.name} 更新成功`);
@@ -73,12 +76,20 @@ const Firmware: FC<FirmwareProps> = ({firmware, dispatch}) => {
             <Card bordered={false} style={{"marginTop": 24}} title="文件下载">
                     <Row gutter={[16, 16]} justify="center">
                         <Col >
-                            <Button icon={<DownloadOutlined />}>下载运行日志</Button>
+                            <Button icon={<DownloadOutlined />} onClick={() => {
+                                dispatch({
+                                    type: "firmware/downloadLog"
+                                });
+                            }}>下载运行日志</Button>
                         </Col>
                     </Row>
                     <Row justify="center">
                         <Col>
-                            <Button icon={<DownloadOutlined />}>下载冲激响应日志</Button>
+                            <Button icon={<DownloadOutlined />} onClick={() => {
+                                dispatch({
+                                    type: "firmware/downloadImpulse"
+                                });
+                            }}>下载冲激响应日志</Button>
                         </Col>
                     </Row>
             </Card>
