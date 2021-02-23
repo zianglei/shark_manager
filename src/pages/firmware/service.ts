@@ -11,3 +11,11 @@ export async function uploadUltrascaleService({chunk, filename, offset}) {
         data: chunk
     }).catch((error) => ({error})); 
 }
+
+export async function downloadLogService() {
+    window.open('/api/firmware/log');
+}
+
+export async function downloadImpulseService() {
+    window.open('/api/firmware/impulse');
+}

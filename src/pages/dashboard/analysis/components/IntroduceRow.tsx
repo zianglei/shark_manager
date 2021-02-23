@@ -10,21 +10,21 @@ import { ChartCard, MiniArea, MiniBar, MiniProgress, Field } from './Charts';
 import { VisitDataType } from '../data.d';
 import Celsius from '../utils/celsius';
 import styles from '../style.less';
+import NumberInfo from './NumberInfo'
 
 const topColResponsiveProps = {
   xs: 24,
   sm: 12,
   md: 12,
   lg: 12,
-  xl: 8,
+  xl: 6,
   style: { marginBottom: 24 },
 };
 
-const IntroduceRow = ({ loading, visitData }: { loading: boolean; visitData: VisitDataType[] }) => (
+const IntroduceRow = ({ loading, temperature }: { loading: boolean; temperature: number; }) => (
   <Row gutter={24} type="flex">
     <Col {...topColResponsiveProps}>
-      <ChartCard
-        bordered={false}
+      <NumberInfo
         loading={loading}
         title={
           <FormattedMessage
@@ -32,27 +32,24 @@ const IntroduceRow = ({ loading, visitData }: { loading: boolean; visitData: Vis
               defaultMessage="温度"
           />
         }
-        total={()=><Celsius>1234</Celsius>}
-        contentHeight={46}
+        value={()=><Celsius>{temperature}</Celsius>}
+        bordered={false}
       >
-        <MiniArea line height={45} data={visitData} />
-      </ChartCard>
+      </NumberInfo>
     </Col>
     <Col {...topColResponsiveProps}>
-      <ChartCard
+      <NumberInfo
         bordered={false}
         loading={loading}
         title={
           <FormattedMessage id="dashboardandanalysis.analysis.packet-sent" defaultMessage="发送报文个数" />
         }
-        total={numeral(6560).format('0,0')}
-        contentHeight={46}
+        value={numeral(6560).format('0,0')}
       >
-        <MiniBar data={visitData} />
-      </ChartCard>
+      </NumberInfo>
     </Col>
     <Col {...topColResponsiveProps}>
-      <ChartCard
+      <NumberInfo
         loading={loading}
         bordered={false}
         title={
@@ -61,11 +58,23 @@ const IntroduceRow = ({ loading, visitData }: { loading: boolean; visitData: Vis
             defaultMessage="Operational Effect"
           />
         }
-        total="32"
-        contentHeight={46}
+        value="32"
       >
-        <MiniBar data={visitData} />
-      </ChartCard>
+      </NumberInfo>
+    </Col>
+    <Col {...topColResponsiveProps}>
+      <NumberInfo
+        loading={loading}
+        bordered={false}
+        title={
+          <FormattedMessage
+            id="dashboardandanalysis.analysis.packet-error"
+            defaultMessage="Operational Effect"
+          />
+        }
+        value="32"
+      >
+      </NumberInfo>
     </Col>
   </Row>
 );

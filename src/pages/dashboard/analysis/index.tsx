@@ -1,5 +1,5 @@
 import { EllipsisOutlined } from '@ant-design/icons';
-import { Col, Dropdown, Menu, Row } from 'antd';
+import { Col, Dropdown, Menu, message, Row } from 'antd';
 import React, { Component, Suspense } from 'react';
 import { GridContent } from '@ant-design/pro-layout';
 import { RadioChangeEvent } from 'antd/es/radio';
@@ -30,6 +30,7 @@ interface AnalysisState {
   salesType: 'all' | 'online' | 'stores';
   currentTabKey: string;
   rangePickerValue: RangePickerValue;
+  temperature: number;
 }
 
 class Analysis extends Component<AnalysisProps, AnalysisState> {
@@ -37,7 +38,10 @@ class Analysis extends Component<AnalysisProps, AnalysisState> {
     salesType: 'all',
     currentTabKey: '',
     rangePickerValue: getTimeDistance('year'),
+    temperature: 0.0,
   };
+
+  ws: WebSocket = new WebSocket("ws://10.211.55.11:8888/data");
 
   reqRef: number = 0;
 
@@ -50,6 +54,20 @@ class Analysis extends Component<AnalysisProps, AnalysisState> {
         type: 'dashboardAndanalysis/fetch',
       });
     });
+    this.ws.onmessage = (ev) => {
+      const temperature = parseInt(ev.data);
+      this.setState({
+        temperature: temperature
+      })
+    };
+
+    this.ws.onerror = (ev) => {
+      // 路由到错误界面
+    }
+
+    this.ws.onopen = (ev) => {
+      console.log(ev);
+    }
   }
 
   componentWillUnmount() {
@@ -59,6 +77,7 @@ class Analysis extends Component<AnalysisProps, AnalysisState> {
     });
     cancelAnimationFrame(this.reqRef);
     clearTimeout(this.timeoutId);
+    this.ws.close();
   }
 
   handleChangeSalesType = (e: RadioChangeEvent) => {
@@ -156,9 +175,9 @@ class Analysis extends Component<AnalysisProps, AnalysisState> {
       <GridContent>
         <React.Fragment>
           <Suspense fallback={<PageLoading />}>
-            <IntroduceRow loading={loading} visitData={visitData} />
+            <IntroduceRow loading={loading} temperature={this.state.temperature} />
           </Suspense>
-          <Suspense fallback={null}>
+          {/* <Suspense fallback={null}>
             <SalesCard
               rangePickerValue={rangePickerValue}
               salesData={salesData}
@@ -204,7 +223,7 @@ class Analysis extends Component<AnalysisProps, AnalysisState> {
               offlineChartData={offlineChartData}
               handleTabChange={this.handleTabChange}
             />
-          </Suspense>
+          </Suspense> */}
         </React.Fragment>
       </GridContent>
     );

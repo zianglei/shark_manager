@@ -87,7 +87,7 @@ class ChartCard extends React.Component<ChartCardProps> {
       ...rest
     } = this.props;
     return (
-      <Card loading={loading} bodyStyle={{ padding: '20px 24px 8px 24px' }} {...rest}>
+      <Card loading={loading} bodyStyle={{ padding: '20px 24px 18px 24px' }} {...rest}>
         {this.renderContent()}
       </Card>
     );

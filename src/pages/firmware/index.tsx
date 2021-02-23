@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState } from 'react'
 import { connect } from 'umi';
 import { Upload, Card, Button, Row, Col, message} from 'antd';
 import { PageContainer } from '@ant-design/pro-layout';
-import { UploadOutlined, DownloadOutlined } from '@ant-design/icons';
+import { UploadOutlined, DownloadOutlined, SyncOutlined } from '@ant-design/icons';
 
 interface FirmwareProps {
 
@@ -64,8 +64,6 @@ const Firmware: FC<FirmwareProps> = ({firmware, dispatch}) => {
                                 <Button icon={<UploadOutlined />}>更新 Ultrascale Bit 文件</Button>
                             </Upload>
                         </Col>
-                    </Row>
-                    <Row justify="center">
                         <Col>
                             <Upload {...zynqProps}>
                                 <Button icon={<UploadOutlined />}>更新 ZYNQ 文件</Button>
@@ -82,14 +80,30 @@ const Firmware: FC<FirmwareProps> = ({firmware, dispatch}) => {
                                 });
                             }}>下载运行日志</Button>
                         </Col>
-                    </Row>
-                    <Row justify="center">
                         <Col>
                             <Button icon={<DownloadOutlined />} onClick={() => {
                                 dispatch({
                                     type: "firmware/downloadImpulse"
                                 });
                             }}>下载冲激响应日志</Button>
+                        </Col>
+                    </Row>
+            </Card>
+            <Card bordered={false} style={{"marginTop": 24}} title="设备控制">
+                    <Row gutter={[16, 16]} justify="center">
+                        <Col >
+                            <Button icon={<SyncOutlined />} onClick={() => {
+                                dispatch({
+                                    type: "control/restartService"
+                                });
+                            }}>重启控制程序</Button> 
+                        </Col>
+                        <Col >
+                            <Button danger icon={<SyncOutlined />} onClick={() => {
+                                dispatch({
+                                    type: "control/restartDevice"
+                                });
+                            }}>重启基带板</Button>
                         </Col>
                     </Row>
             </Card>

@@ -14,7 +14,8 @@ export interface ConfigData {
   bigAntennaEnable: boolean, 
   bitErrorEnable: boolean,
   checkGPIOEnable: boolean,
-  testPacketNum: number
+  testPacketNum: number,
+  vbandAttenuation: number
 }
 
 export interface ModelType {

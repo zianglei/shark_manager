@@ -12,6 +12,12 @@ export default {
       changeOrigin: true,
       pathRewrite: { '^/api': '' },
     },
+    '/wsdata/': {
+      target: 'ws://10.211.55.11:8888',
+      changeOrigin: true,
+      ws: true,
+      pathRewrite: {'^/data': ''},
+    }
   },
   test: {
     '/api/': {

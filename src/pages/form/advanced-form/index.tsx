@@ -5,8 +5,11 @@ import React, { FC, useEffect, useState } from 'react';
 import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
 import { connect, Dispatch } from 'umi';
 import TableForm from './components/TableForm';
+import AngleBeamForm from './components/AngleBeamForm';
+
 import styles from './style.less';
 import { ConfigData } from './model'
+import BoardOption from './components/BoardOption';
 
 type InternalNamePath = (string | number)[];
 
@@ -26,6 +29,7 @@ const fieldLabels = {
   bitErrorEnable: '启用误码率统计',
   checkGPIOEnable: '启用引脚状态检测',
   testPacketNum: '测试报文数量',
+  vbandAttenuation: 'V段衰减'
 
 };
 
@@ -52,6 +56,21 @@ const tableData = [
   },
 ];
 
+const angleBeamData = [
+  {
+    key: '1',
+    nodeIndex: '1',
+  },
+  {
+    key: '2',
+    nodeIndex: '2',
+  },
+  {
+    key: '3',
+    nodeIndex: '3'
+  }
+];
+
 interface AdvancedFormProps {
   configForm: ConfigData,
   dispatch: Dispatch<any>;
@@ -67,6 +86,7 @@ interface ErrorField {
 const AdvancedForm: FC<AdvancedFormProps> = ({ configForm, submitting, getting, dispatch }) => {
   const [form] = Form.useForm();
   const [error, setError] = useState<ErrorField[]>([]);
+  const [role, setRole] = useState(0);
   const {
     address
   } = configForm;
@@ -128,6 +148,10 @@ const AdvancedForm: FC<AdvancedFormProps> = ({ configForm, submitting, getting, 
     setError(errorInfo.errorFields);
   };
 
+  const onRoleChange = (value: number) => {
+    setRole(value);
+  }
+
   useEffect(() => {
     form.setFieldsValue({
       ...configForm
@@ -139,7 +163,16 @@ const AdvancedForm: FC<AdvancedFormProps> = ({ configForm, submitting, getting, 
       form={form}
       layout="vertical"
       hideRequiredMark
-      initialValues={{ slots: tableData }}
+      initialValues={{ 
+        slots: tableData, 
+        angleBeams: angleBeamData,
+        bigAntennaEnable: false,  
+        costasLoopEnable: true,
+        impulseEnable: false,
+        bitErrorEnable: false,
+        checkGPIOEnable: true,
+        continuousTransceiveEnable: false
+      }}
       onFinish={onFinish}
       onFinishFailed={onFinishFailed}
     >
@@ -178,7 +211,9 @@ const AdvancedForm: FC<AdvancedFormProps> = ({ configForm, submitting, getting, 
                 name="role"
                 rules={[{ required: true, message: '请选择角色' }]}
               >
-                <Select placeholder="请选择角色">
+                <Select placeholder="请选择角色"                 
+                        onChange={onRoleChange}
+>
                   <Option value={0}>双向通信</Option>
                   <Option value={1}>单向发送</Option>
                   <Option value={2}>单向接收</Option>
@@ -199,7 +234,7 @@ const AdvancedForm: FC<AdvancedFormProps> = ({ configForm, submitting, getting, 
             </Col>
           </Row>
           <Row gutter={16}>
-            <Col lg={5} md={12} sm={24}>
+            <Col xl={{ span: 5 }} lg={{ span: 4 }} md={{ span: 24 }} sm={24}>
               <Form.Item
                 label={fieldLabels.testPacketNum}
                 name="testPacketNum"
@@ -212,45 +247,65 @@ const AdvancedForm: FC<AdvancedFormProps> = ({ configForm, submitting, getting, 
                 />
               </Form.Item>
             </Col>
+            <Col xl={{ span: 5, offset: 1 }} lg={{ span: 4 }} md={{ span: 24 }} sm={24}>
+              <Form.Item
+                label={fieldLabels.vbandAttenuation}
+                name="vbandAttenuation"
+                rules={[{ required: true, message: '请输入' }]}
+              > 
+                <InputNumber 
+                  placeholder="请输入V段衰减" size="middle" step={1}
+                  value = {configForm.vbandAttenuation}
+                  style={{ width: '100%' }}
+                />
+              </Form.Item>
+            </Col>
           </Row>
         </Card>
         <Card title="选项配置" className={styles.card} bordered={false}>
           <Row gutter={16}>
             <Col lg={4} md={12} sm={24}>
-              <Form.Item name="bigAntennaEnable">
-                <Checkbox>{fieldLabels.bigAntennaEnable}</Checkbox>
+              <Form.Item name="bigAntennaEnable" valuePropName="checked">
+                <Checkbox>使能大天线</Checkbox>
               </Form.Item>
             </Col>
             <Col xl={{ span: 4 }} lg={{ span: 4 }} md={{ span: 12 }} sm={24}>
-              <Form.Item name="continuousTransceiveEnable">
-                <Checkbox>{fieldLabels.continuousTransceiveEnable}</Checkbox>
+              <Form.Item name="continuousTransceiveEnable" valuePropName="checked">
+                <Checkbox disabled={role != 1}>
+                    启用中频连发
+                </Checkbox>
               </Form.Item>
             </Col>
             <Col xl={{ span: 4 }} lg={{ span: 4 }} md={{ span: 12 }} sm={24}>
-              <Form.Item name="costasLoopEnable">
-                <Checkbox>{fieldLabels.costasEnable}</Checkbox>
+              <Form.Item name="costasLoopEnable" valuePropName="checked">
+                <Checkbox>使能costa环路</Checkbox>
               </Form.Item>
             </Col>
             <Col xl={{ span: 4 }} lg={{ span: 4 }} md={{ span: 12 }} sm={24}>
-              <Form.Item name="impulseEnable">
-                <Checkbox>{fieldLabels.impulseEnable}</Checkbox>
+              <Form.Item name="impulseEnable" valuePropName="checked">
+                <Checkbox disabled={role == 1}>使能冲激响应</Checkbox>
               </Form.Item>
             </Col>
             <Col xl={{ span: 4 }} lg={{ span: 4 }} md={{ span: 12 }} sm={24}>
-              <Form.Item name="bitErrorEnable">
-                <Checkbox>{fieldLabels.bitErrorEnable}</Checkbox>
+              <Form.Item name="bitErrorEnable" valuePropName="checked">
+                <Checkbox>使能误码率统计</Checkbox>
               </Form.Item>
             </Col>
             <Col xl={{ span: 4 }} lg={{ span: 4 }} md={{ span: 12 }} sm={24}>
-              <Form.Item name="checkGPIOEnable">
-                <Checkbox>{fieldLabels.checkGPIOEnable}</Checkbox>
+              <Form.Item name="checkGPIOEnable" valuePropName="checked">
+                <Checkbox>使能引脚初始状态检测</Checkbox>
               </Form.Item>
             </Col>
-          </Row>
+          </Row>        
         </Card>
-        <Card title="时隙管理" bordered={false}>
+        <Card title="时隙管理" className={styles.card} bordered={false}>
           <Form.Item name="slots">
             <TableForm />
+          </Form.Item>
+        </Card>
+        <Card title="角度波束控制" className={styles.card} bordered={false}>
+          <Form.Item name="angleBeams">
+            <AngleBeamForm />
           </Form.Item>
         </Card>
       </PageContainer>

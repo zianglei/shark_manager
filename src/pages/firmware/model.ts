@@ -1,6 +1,7 @@
-import { chunk } from 'lodash';
 import { Effect } from 'umi';
+import { message } from 'antd';
 import { uploadZynqService, uploadUltrascaleService} from './service';
+import { downloadLogService, downloadImpulseService} from './service';
 
 export interface ModelType {
     namespace: string;
@@ -11,6 +12,8 @@ export interface ModelType {
     effects: {
         uploadZynqFirmware: Effect;
         uploadUltrascaleFirmware: Effect;
+        downloadLog: Effect;
+        downloadImpulse: Effect;
     }
 }
 
@@ -61,6 +64,21 @@ const Model: ModelType = {
 
         *uploadUltrascaleFirmware({payload}, {call}) {
             uploadFirmware({payload, uploadFunc: uploadUltrascaleService}, {call});
+        },
+
+        *downloadLog(_, {call}) {
+            yield call(downloadLogService);
+            // // if (error) {
+            // //     message.error("下载运行日志失败");
+            // // }
+            // window.open("/api/")
+        },
+        
+        *downloadImpulse(_, {call}) {
+            const {error} = yield call(downloadImpulseService);
+            if (error) {
+                message.error("下载冲激响应日志失败");
+            }
         }
     }
 }
