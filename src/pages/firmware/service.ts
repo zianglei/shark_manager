@@ -19,3 +19,13 @@ export async function downloadLogService() {
 export async function downloadImpulseService() {
     window.open('/api/firmware/impulse');
 }
+
+export async function restartProgramService() {
+    return request.get('/api/control/restart/service')
+        .catch((error) => ({error}));
+}
+
+export async function restartDeviceService() {
+    return request.get('/api/control/restart/device')
+        .catch((error) => ({error}));
+}

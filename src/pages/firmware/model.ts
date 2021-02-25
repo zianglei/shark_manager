@@ -1,19 +1,29 @@
-import { Effect } from 'umi';
+import { Effect, Reducer } from 'umi';
 import { message } from 'antd';
 import { uploadZynqService, uploadUltrascaleService} from './service';
 import { downloadLogService, downloadImpulseService} from './service';
+import { restartDeviceService, restartProgramService } from './service'; 
+import { getConfigRequest } from '../form/advanced-form/service';
+
+export interface StateType {
+    zynqFileisUploading: boolean;
+    fpgaFileisUploading: boolean;
+    spinning: boolean; 
+}
 
 export interface ModelType {
     namespace: string;
-    state: {
-        zynqFileisUploading: boolean;
-        fpgaFileisUploading: boolean;
+    state: StateType
+    reducers: {
+        updateSpinState: Reducer<StateType>;
     };
     effects: {
         uploadZynqFirmware: Effect;
         uploadUltrascaleFirmware: Effect;
         downloadLog: Effect;
         downloadImpulse: Effect;
+        restartProgram: Effect;
+        restartDevice: Effect;
     }
 }
 
@@ -54,8 +64,18 @@ const Model: ModelType = {
     namespace: "firmware",
     state: {
         zynqFileisUploading: false,
-        fpgaFileisUploading: false
+        fpgaFileisUploading: false,
+        spinning: false
     },
+    reducers: {
+        updateSpinState(state, { payload }) {
+            return {
+                ...state,
+                spinning: payload.spinning,
+            }
+        }
+    },
+
     effects: {
         *uploadZynqFirmware({payload}, 
                             {call}) {
@@ -79,7 +99,43 @@ const Model: ModelType = {
             if (error) {
                 message.error("下载冲激响应日志失败");
             }
+        },
+
+        *restartProgram(_, {call}) {
+            const {error} = yield call(restartProgramService);
+            if (error) {
+                message.error("重启失败")
+            } else {
+                message.success("重启成功");
+            }
+        },
+
+        *restartDevice(_, {call, put}) {
+            const { error } = yield call(restartDeviceService);
+            
+            yield put({
+                type: 'firmware/updateSpinState',
+                payload: { spinning: true}
+            });
+
+            let checkDeviceStatus = async () => {
+                const { response, error } = await getConfigRequest();
+                if (error) {
+                    await ((ms) => new Promise(resolve => setTimeout(resolve, ms)))(1000);
+                    checkDeviceStatus();
+                }
+            }
+                        
+            yield call(checkDeviceStatus);
+
+            yield put({
+                type: 'firmware/updateSpinState',
+                payload: { spinning: false }
+            });
+
         }
+
+
     }
 }
 

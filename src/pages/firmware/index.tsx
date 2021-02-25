@@ -1,11 +1,13 @@
 import React, { FC, useEffect, useState } from 'react'
 import { connect } from 'umi';
-import { Upload, Card, Button, Row, Col, message} from 'antd';
+import { Upload, Card, Button, Row, Col, message, Spin} from 'antd';
 import { PageContainer } from '@ant-design/pro-layout';
 import { UploadOutlined, DownloadOutlined, SyncOutlined } from '@ant-design/icons';
+import { StateType } from './model'
 
 interface FirmwareProps {
-
+    dispatch: Dispatch<any>;
+    firmware: StateType
 }
 
 const Firmware: FC<FirmwareProps> = ({firmware, dispatch}) => {
@@ -57,6 +59,7 @@ const Firmware: FC<FirmwareProps> = ({firmware, dispatch}) => {
 
     return (
         <PageContainer content="">
+            <Spin size="large" spinning={firmware.spinning}>
             <Card bordered={false} title="固件更新">
                     <Row gutter={[16, 16]} justify="center">
                         <Col >
@@ -94,26 +97,28 @@ const Firmware: FC<FirmwareProps> = ({firmware, dispatch}) => {
                         <Col >
                             <Button icon={<SyncOutlined />} onClick={() => {
                                 dispatch({
-                                    type: "control/restartService"
+                                    type: "firmware/restartProgram"
                                 });
                             }}>重启控制程序</Button> 
                         </Col>
                         <Col >
                             <Button danger icon={<SyncOutlined />} onClick={() => {
                                 dispatch({
-                                    type: "control/restartDevice"
+                                    type: "firmware/restartDevice"
                                 });
                             }}>重启基带板</Button>
                         </Col>
                     </Row>
             </Card>
+            </Spin>
         </PageContainer>
     )
 };
 
-export default connect(({ firmware } :
+export default connect(
+    ({ firmware} :
     {
-        firmware: any;
+        firmware: StateType,
     }) => ({
         firmware,
     }
