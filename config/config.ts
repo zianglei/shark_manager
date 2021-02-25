@@ -21,6 +21,8 @@ export default defineConfig({
     // default true, when it is true, will use `navigator.language` overwrite default
     baseNavigator: true,
   },
+  base: '/dashboard/',
+  publicPath: '/dashboard/',
   dynamicImport: {
     loading: '@/components/PageLoading/index',
   },

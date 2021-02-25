@@ -139,6 +139,10 @@ const AdvancedForm: FC<AdvancedFormProps> = ({ configForm, submitting, getting, 
   const onFinish = (values: { [key: string]: any }) => {
     setError([]);
     dispatch({
+      type: 'configForm/loadConfig',
+      payload: values,
+    });
+    dispatch({
       type: 'configForm/submitConfig',
       payload: values,
     });
@@ -156,7 +160,7 @@ const AdvancedForm: FC<AdvancedFormProps> = ({ configForm, submitting, getting, 
     form.setFieldsValue({
       ...configForm
     })
-  })
+  });
 
   return (
     <Form

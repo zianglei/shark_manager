@@ -2,6 +2,21 @@ import { Effect, Reducer } from 'umi';
 import { message } from 'antd';
 import { getConfigRequest, submitConfigRequest } from './service';
 
+export interface SlotData {
+  key: number,
+  sender: number,
+  receiver: number
+}
+
+export interface AngleBeamData {
+  key: number,
+  nodeIndex: number,
+  sendBeam: number,
+  sendAngle: number,
+  recvBeam: number,
+  recvAngle: number
+}
+
 export interface ConfigData {
   address: number,
   mode: number,
@@ -15,7 +30,9 @@ export interface ConfigData {
   bitErrorEnable: boolean,
   checkGPIOEnable: boolean,
   testPacketNum: number,
-  vbandAttenuation: number
+  vbandAttenuation: number,
+  slots: SlotData[],
+  angleBeams: AngleBeamData[]
 }
 
 export interface ModelType {
@@ -46,8 +63,11 @@ const Model: ModelType = {
   effects: {
     *getConfig(_, { call, put }) {
       // 获取现在的配置信息
-      const response = yield call(getConfigRequest);
-      console.log(response)
+      const {response, error} = yield call(getConfigRequest);
+      if (error) {
+        message.error("读取配置失败");
+        return;
+      }
       const status = {
         address: response.stack.address,
         mode: response.stack.mode,
@@ -60,8 +80,62 @@ const Model: ModelType = {
         bigAntennaEnable: response.stack.big_antenna_enable, 
         bitErrorEnable: response.stack.bit_err_count_enable,
         checkGPIOEnable: response.stack.check_fpga_enable,
-        testPacketNum: response.test.packet_num
+        testPacketNum: response.test.packet_num,
+        vbandAttenuation: response.stack.vband_attenuation,
+        // vband
+        slots: [
+          {
+            key: 1, 
+            sender: (response.vband.slot0) >> 4,
+            receiver: (response.vband.slot0) & 0xf
+          },
+          {
+            key: 2, 
+            sender: (response.vband.slot1) >> 4,
+            receiver: (response.vband.slot1) & 0xf
+          },
+          {
+            key: 3, 
+            sender: (response.vband.slot2) >> 4,
+            receiver: (response.vband.slot2) & 0xf
+          },
+          {
+            key: 4, 
+            sender: (response.vband.slot3) >> 4,
+            receiver: (response.vband.slot3) & 0xf
+          },
+          {
+            key: 5, 
+            sender: (response.vband.slot4) >> 4,
+            receiver: (response.vband.slot4) & 0xf
+          },
+        ],
+        angleBeams: [
+          {
+            key: 1,
+            sendAngle: response.vband.node1_send_angle,
+            sendBeam: response.vband.node1_send_beam,
+            recvAngle: response.vband.node1_recv_angle,
+            recvBeam: response.vband.node1_recv_beam
+          },
+          {
+            key: 2,
+            sendAngle: response.vband.node2_send_angle,
+            sendBeam: response.vband.node2_send_beam,
+            recvAngle: response.vband.node2_recv_angle,
+            recvBeam: response.vband.node2_recv_beam
+          },
+          {
+            key: 3,
+            sendAngle: response.vband.node3_send_angle,
+            sendBeam: response.vband.node3_send_beam,
+            recvAngle: response.vband.node3_recv_angle,
+            recvBeam: response.vband.node3_recv_beam
+          }
+        ]
       }
+      message.success("读取配置成功");
+      console.log(status);
       yield put({
         type: 'loadConfig',
         payload: status

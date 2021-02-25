@@ -2,7 +2,8 @@ import request from 'umi-request';
 
 export async function getConfigRequest() {
   return request.get('/api/config/get')
-    .then((response) => (response));
+    .then((response) => ({response, undefined}))
+    .catch(error => ({undefined, error}));
 }
 
 export async function submitConfigRequest(payload: any) {
