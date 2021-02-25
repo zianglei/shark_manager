@@ -8,7 +8,9 @@ import { getConfigRequest } from '../form/advanced-form/service';
 export interface StateType {
     zynqFileisUploading: boolean;
     fpgaFileisUploading: boolean;
-    spinning: boolean; 
+    spinning: boolean;
+    zynqFileList: [];
+    fpgaFileList: [];
 }
 
 export interface ModelType {
@@ -16,6 +18,8 @@ export interface ModelType {
     state: StateType
     reducers: {
         updateSpinState: Reducer<StateType>;
+        updateZynqFileList: Reducer<StateType>;
+        updateFpgaFileList: Reducer<StateType>;
     };
     effects: {
         uploadZynqFirmware: Effect;
@@ -65,7 +69,9 @@ const Model: ModelType = {
     state: {
         zynqFileisUploading: false,
         fpgaFileisUploading: false,
-        spinning: false
+        spinning: false,
+        zynqFileList: [],
+        fpgaFileList: []
     },
     reducers: {
         updateSpinState(state, { payload }) {
@@ -73,7 +79,20 @@ const Model: ModelType = {
                 ...state,
                 spinning: payload.spinning,
             }
+        },
+        updateZynqFileList(state, { payload }) {
+            return {
+                ...state,
+                zynqFileList: payload
+            }
+        },
+        updateFpgaFileList(state, { payload }) {
+            return {
+                ...state,
+                fpgaFileList: payload
+            }
         }
+
     },
 
     effects: {

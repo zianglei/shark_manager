@@ -12,15 +12,26 @@ interface FirmwareProps {
 
 const Firmware: FC<FirmwareProps> = ({firmware, dispatch}) => {
     let zynqFileIsUploading = false, fpgaFileIsUploading = false;
+
     const fpgaProps = {
         name: 'ultrascale_baseband_top.bit',
         onChange(info) {
+
+            let fileList = [...info.fileList];
+            
+            fileList = fileList.slice(-1);
+
             if (info.file.status === 'done' && fpgaFileIsUploading) {
               message.success(`${info.file.name} 更新成功`);
               fpgaFileIsUploading = false;
             } else if (info.file.status === 'error') {
               message.error(`${info.file.name} 更新失败`);
             }
+
+            dispatch({
+                type: 'firmware/updateFpgaFileList',
+                payload: fileList
+            })
         },
         customRequest: (options) => {
             fpgaFileIsUploading = true;
@@ -33,13 +44,23 @@ const Firmware: FC<FirmwareProps> = ({firmware, dispatch}) => {
 
     const zynqProps = {
         name: 'fpga.bit',
+    
         onChange(info) {
+            let fileList = [...info.fileList];
+            
+            fileList = fileList.slice(-1);
+
             if (info.file.status === 'done' && zynqFileIsUploading) {
               message.success(`${info.file.name} 更新成功`);
               zynqFileIsUploading = false;
             } else if (info.file.status === 'error') {
               message.error(`${info.file.name} 更新失败`);
             }
+
+            dispatch({
+                type: 'firmware/updateZynqFileList',
+                payload: fileList
+            })
         },
         customRequest: (options) => {
             zynqFileIsUploading = true;
@@ -61,21 +82,24 @@ const Firmware: FC<FirmwareProps> = ({firmware, dispatch}) => {
         <PageContainer content="">
             <Spin size="large" spinning={firmware.spinning}>
             <Card bordered={false} title="固件更新">
-                    <Row gutter={[16, 16]} justify="center">
+                    <Row gutter={[16, 16]}>
                         <Col >
-                            <Upload {...fpgaProps}>
+                            <Upload {...fpgaProps} fileList={firmware.fpgaFileList}>
                                 <Button icon={<UploadOutlined />}>更新 Ultrascale Bit 文件</Button>
                             </Upload>
                         </Col>
+                        
+                    </Row>
+                    <Row gutter={[16, 16]}>
                         <Col>
-                            <Upload {...zynqProps}>
+                            <Upload {...zynqProps} fileList={firmware.zynqFileList}>
                                 <Button icon={<UploadOutlined />}>更新 ZYNQ 文件</Button>
                             </Upload>
                         </Col>
                     </Row>
             </Card>
             <Card bordered={false} style={{"marginTop": 24}} title="文件下载">
-                    <Row gutter={[16, 16]} justify="center">
+                    <Row gutter={[16, 16]}>
                         <Col >
                             <Button icon={<DownloadOutlined />} onClick={() => {
                                 dispatch({
@@ -83,6 +107,8 @@ const Firmware: FC<FirmwareProps> = ({firmware, dispatch}) => {
                                 });
                             }}>下载运行日志</Button>
                         </Col>
+                    </Row>
+                    <Row>
                         <Col>
                             <Button icon={<DownloadOutlined />} onClick={() => {
                                 dispatch({
@@ -93,7 +119,7 @@ const Firmware: FC<FirmwareProps> = ({firmware, dispatch}) => {
                     </Row>
             </Card>
             <Card bordered={false} style={{"marginTop": 24}} title="设备控制">
-                    <Row gutter={[16, 16]} justify="center">
+                    <Row gutter={[16, 16]}>
                         <Col >
                             <Button icon={<SyncOutlined />} onClick={() => {
                                 dispatch({
@@ -101,6 +127,8 @@ const Firmware: FC<FirmwareProps> = ({firmware, dispatch}) => {
                                 });
                             }}>重启控制程序</Button> 
                         </Col>
+                    </Row>
+                    <Row>
                         <Col >
                             <Button danger icon={<SyncOutlined />} onClick={() => {
                                 dispatch({
