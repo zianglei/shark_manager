@@ -14,7 +14,7 @@ export async function submitConfigRequest(payload: any) {
       "address": payload.address, 
       "mode": payload.mode, 
       "role": payload.role, 
-      "antennaMode": payload.mode,
+      "antennaMode": payload.antennaMode,
       "big_antenna_enable": payload.bigAntennaEnable,
       "continuous_transceive": payload.continuousTransceiveEnable,
       "impulse_response_enable": payload.impulseEnable,
@@ -46,7 +46,11 @@ export async function submitConfigRequest(payload: any) {
     }
   }
   console.log(jsonPayload);
-  return request.post('/api/config/set', {
+  const { error } = await request.post('/api/config/set', {
     data: jsonPayload 
   }).catch((error) => ({error}));
+  if (error) return { error };
+
+  return request.get('/api/control/restart/service')
+    .catch((error) => ({error}));
 }
