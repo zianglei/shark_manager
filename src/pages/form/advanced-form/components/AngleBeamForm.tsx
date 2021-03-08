@@ -114,10 +114,10 @@ const AngleBeamForm: FC<AngleBeamFormProps> = ({ value, onChange }) => {
             style={{ width: '80%' }}
             value={record.sendBeam}
             onSelect={(e, option) => handleFieldChange(e, 'sendBeam', record.key)}>
-            <Option value={1}>00</Option>
-            <Option value={2}>01</Option>
-            <Option value={3}>10</Option>
-            <Option value={4}>11</Option>
+            <Option value={0}>00</Option>
+            <Option value={1}>01</Option>
+            <Option value={2}>10</Option>
+            <Option value={3}>11</Option>
           </Select>
         );
       },
@@ -147,10 +147,10 @@ const AngleBeamForm: FC<AngleBeamFormProps> = ({ value, onChange }) => {
               style={{ width: '80%' }}
               value={record.recvBeam}
               onSelect={(e, option) => handleFieldChange(e, 'recvBeam', record.key)}>
-              <Option value={1}>00</Option>
-              <Option value={2}>01</Option>
-              <Option value={3}>10</Option>
-              <Option value={4}>11</Option>
+              <Option value={0}>00</Option>
+              <Option value={1}>01</Option>
+              <Option value={2}>10</Option>
+              <Option value={3}>11</Option>
             </Select>
           );
         },
