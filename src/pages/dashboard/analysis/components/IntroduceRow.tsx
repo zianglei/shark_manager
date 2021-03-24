@@ -21,7 +21,13 @@ const topColResponsiveProps = {
   style: { marginBottom: 24 },
 };
 
-const IntroduceRow = ({ loading, temperature }: { loading: boolean; temperature: number; }) => (
+const IntroduceRow = ({ loading, temperature, packetSent, packetRecv, packetErr }: 
+    { loading: boolean; 
+      temperature: number; 
+      packetSent: number; 
+      packetRecv: number;
+      packetErr: number
+    }) => (
   <Row gutter={24} type="flex">
     <Col {...topColResponsiveProps}>
       <NumberInfo
@@ -44,7 +50,7 @@ const IntroduceRow = ({ loading, temperature }: { loading: boolean; temperature:
         title={
           <FormattedMessage id="dashboardandanalysis.analysis.packet-sent" defaultMessage="发送报文个数" />
         }
-        value={numeral(6560).format('0,0')}
+        value={packetSent}
       >
       </NumberInfo>
     </Col>
@@ -58,7 +64,7 @@ const IntroduceRow = ({ loading, temperature }: { loading: boolean; temperature:
             defaultMessage="Operational Effect"
           />
         }
-        value="32"
+        value={numeral(packetRecv).format('0,0')}
       >
       </NumberInfo>
     </Col>
@@ -72,7 +78,7 @@ const IntroduceRow = ({ loading, temperature }: { loading: boolean; temperature:
             defaultMessage="Operational Effect"
           />
         }
-        value="32"
+        value={numeral(packetErr).format('0,0')}
       >
       </NumberInfo>
     </Col>

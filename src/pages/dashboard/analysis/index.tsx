@@ -31,6 +31,9 @@ interface AnalysisState {
   currentTabKey: string;
   rangePickerValue: RangePickerValue;
   temperature: number;
+  packetSent: number,
+  packetRecv: number;
+  packetErr: number;
 }
 
 class Analysis extends Component<AnalysisProps, AnalysisState> {
@@ -39,9 +42,13 @@ class Analysis extends Component<AnalysisProps, AnalysisState> {
     currentTabKey: '',
     rangePickerValue: getTimeDistance('year'),
     temperature: 0.0,
+    packetSent: 0,
+    packetRecv: 0,
+    packetErr: 0,
   };
 
-  ws: WebSocket = new WebSocket("ws://10.211.55.11:8888/data");
+  url: string = 'ws://' + window.location.host + '/data';
+  ws: WebSocket = new WebSocket(this.url);
 
   reqRef: number = 0;
 
@@ -49,25 +56,28 @@ class Analysis extends Component<AnalysisProps, AnalysisState> {
 
   componentDidMount() {
     const { dispatch } = this.props;
-    this.reqRef = requestAnimationFrame(() => {
-      dispatch({
-        type: 'dashboardAndanalysis/fetch',
-      });
-    });
+    // this.reqRef = requestAnimationFrame(() => {
+    //   dispatch({
+    //     type: 'dashboardAndanalysis/fetch',
+    //   });
+    // });
     this.ws.onmessage = (ev) => {
-      const temperature = parseInt(ev.data);
+      const dataJson = JSON.parse(ev.data);
+      console.log(dataJson);
       this.setState({
-        temperature: temperature
-      })
+        packetSent: dataJson.packetSent,
+        packetRecv: dataJson.packetRecv,
+        packetErr: dataJson.packetErr,
+      });
     };
 
     this.ws.onerror = (ev) => {
       // 路由到错误界面
-    }
+    };
 
     this.ws.onopen = (ev) => {
       console.log(ev);
-    }
+    };
   }
 
   componentWillUnmount() {
@@ -175,7 +185,13 @@ class Analysis extends Component<AnalysisProps, AnalysisState> {
       <GridContent>
         <React.Fragment>
           <Suspense fallback={<PageLoading />}>
-            <IntroduceRow loading={loading} temperature={this.state.temperature} />
+            <IntroduceRow
+              loading={loading}
+              temperature={this.state.temperature}
+              packetSent={this.state.packetSent}
+              packetRecv={this.state.packetRecv}
+              packetErr={this.state.packetErr}
+            />
           </Suspense>
           {/* <Suspense fallback={null}>
             <SalesCard

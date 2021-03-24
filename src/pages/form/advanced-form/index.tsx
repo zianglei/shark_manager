@@ -205,6 +205,7 @@ const AdvancedForm: FC<AdvancedFormProps> = ({ configForm, submitting, getting, 
                 <Select placeholder="请选择模式">
                   <Option value={2}>V段速率测试</Option>
                   <Option value={3}>V段报文测试</Option>
+                  <Option value={4}>S段测试</Option>
                   <Option value={6}>绘制冲激响应</Option>
                 </Select>
               </Form.Item>

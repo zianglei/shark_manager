@@ -2,8 +2,8 @@ import { Effect, Reducer } from 'umi';
 import { message } from 'antd';
 import { uploadZynqService, uploadUltrascaleService} from './service';
 import { downloadLogService, downloadImpulseService} from './service';
-import { restartDeviceService, restartProgramService } from './service'; 
-import { getConfigRequest } from '../form/advanced-form/service';
+import { restartDeviceService, restartProgramService, syncFirmwareService} from './service'; 
+import { getConfigRequest} from '../form/advanced-form/service';
 
 export interface StateType {
     zynqFileisUploading: boolean;
@@ -50,6 +50,7 @@ let uploadFirmware = ({payload, uploadFunc}, {call}) => {
                     if (offset + chunkSize >= file.size) {
                         console.log(offset, chunkSize, offset + chunkSize, file.size);
                         onSuccess(file);
+                        syncFirmwareService();
                     } else {
                         onProgress({ percent: ((offset + chunkSize) / file.size) * 100}, file);
                         sendChunk(offset + chunkSize);
@@ -62,6 +63,7 @@ let uploadFirmware = ({payload, uploadFunc}, {call}) => {
     }
     
     sendChunk(0);
+
 }
 
 const Model: ModelType = {
@@ -97,8 +99,9 @@ const Model: ModelType = {
 
     effects: {
         *uploadZynqFirmware({payload}, 
-                            {call}) {
+                            {call, put}) {
             uploadFirmware({payload, uploadFunc: uploadZynqService}, {call});
+
         },
 
         *uploadUltrascaleFirmware({payload}, {call}) {
@@ -136,12 +139,17 @@ const Model: ModelType = {
                 type: 'firmware/updateSpinState',
                 payload: { spinning: true}
             });
+            
+            // 至少等待10s
+            let cnt: number = 10;
 
-            let checkDeviceStatus = async () => {
+            const checkDeviceStatus = async () => {
                 const { response, error } = await getConfigRequest();
-                if (error) {
+                if (error || cnt > 0) {
+                    if (error) cnt = 0;
                     await ((ms) => new Promise(resolve => setTimeout(resolve, ms)))(1000);
-                    checkDeviceStatus();
+                    await checkDeviceStatus();
+                    cnt--;
                 }
             }
                         

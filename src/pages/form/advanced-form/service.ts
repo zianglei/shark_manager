@@ -46,6 +46,10 @@ export async function submitConfigRequest(payload: any) {
     }
   }
   console.log(jsonPayload);
+  // return request.post('/api/config/set', {
+  //   data: jsonPayload 
+  // }).catch((error) => ({error}))
+
   const { error } = await request.post('/api/config/set', {
     data: jsonPayload 
   }).catch((error) => ({error}));

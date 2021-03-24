@@ -29,3 +29,8 @@ export async function restartDeviceService() {
     return request.get('/api/control/restart/device')
         .catch((error) => ({error}));
 }
+
+export async function syncFirmwareService() {
+    return request.get('/api/firmware/sync')
+        .catch((error) => ({error}));
+}

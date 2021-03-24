@@ -35,10 +35,10 @@ const Model: ModelType = {
   },
   effects: {
     *init(_, { put }) {
-      yield put({ type: 'fetchUserCurrent' });
-      yield put({ type: 'fetchProjectNotice' });
-      yield put({ type: 'fetchActivitiesList' });
-      yield put({ type: 'fetchChart' });
+      // yield put({ type: 'fetchUserCurrent' });
+      // yield put({ type: 'fetchProjectNotice' });
+      // yield put({ type: 'fetchActivitiesList' });
+      // yield put({ type: 'fetchChart' });
     },
     *fetchUserCurrent(_, { call, put }) {
       const response = yield call(queryCurrent);

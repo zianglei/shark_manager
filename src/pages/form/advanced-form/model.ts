@@ -146,7 +146,7 @@ const Model: ModelType = {
       if (error) {
         message.error('提交配置失败');
       } else {
-        message.success('提交配置成功');
+        message.success('提交配置成功, 已启动服务');
       }
     },
   },
