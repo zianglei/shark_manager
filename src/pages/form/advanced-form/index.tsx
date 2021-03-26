@@ -86,7 +86,7 @@ interface ErrorField {
 const AdvancedForm: FC<AdvancedFormProps> = ({ configForm, submitting, getting, dispatch }) => {
   const [form] = Form.useForm();
   const [error, setError] = useState<ErrorField[]>([]);
-  const [role, setRole] = useState(0);
+  const [selectedRole, setSelectedRole] = useState(0);
   const {
     address
   } = configForm;
@@ -152,9 +152,23 @@ const AdvancedForm: FC<AdvancedFormProps> = ({ configForm, submitting, getting, 
     setError(errorInfo.errorFields);
   };
 
-  const onRoleChange = (value: number) => {
-    setRole(value);
+  const onFormValueChange = (changedValues, allValues) => {
+    // console.log(form.getFieldValue("role"));
+    if ("role" in changedValues) {
+      if (changedValues["role"] !== 1) {
+        form.setFieldsValue({continuousTransceiveEnable: 0})
+      } else {
+        form.setFieldsValue({impulseEnable: 0})
+      }
+    }
   }
+
+  // const onRoleChange = (value: number) => {
+  //   setRole(value);
+  //   if (role !== 1) {
+  //     form.setFieldsValue({continuousTransceiveEnable: 0})
+  //   }
+  // }
 
   useEffect(() => {
     form.setFieldsValue({
@@ -167,6 +181,7 @@ const AdvancedForm: FC<AdvancedFormProps> = ({ configForm, submitting, getting, 
       form={form}
       layout="vertical"
       hideRequiredMark
+      onValuesChange = {onFormValueChange}
       initialValues={{ 
         slots: tableData, 
         angleBeams: angleBeamData,
@@ -216,9 +231,7 @@ const AdvancedForm: FC<AdvancedFormProps> = ({ configForm, submitting, getting, 
                 name="role"
                 rules={[{ required: true, message: '请选择角色' }]}
               >
-                <Select placeholder="请选择角色"                 
-                        onChange={onRoleChange}
->
+                <Select placeholder="请选择角色">
                   <Option value={0}>双向通信</Option>
                   <Option value={1}>单向发送</Option>
                   <Option value={2}>单向接收</Option>
@@ -275,10 +288,22 @@ const AdvancedForm: FC<AdvancedFormProps> = ({ configForm, submitting, getting, 
               </Form.Item>
             </Col>
             <Col xl={{ span: 4 }} lg={{ span: 4 }} md={{ span: 12 }} sm={24}>
-              <Form.Item name="continuousTransceiveEnable" valuePropName="checked">
-                <Checkbox disabled={role != 1}>
-                    启用中频连发
-                </Checkbox>
+              <Form.Item 
+                  shouldUpdate>
+                {({ getFieldValue }) => (
+                  getFieldValue('role') === 1 ? (
+                      <Form.Item name="continuousTransceiveEnable" valuePropName="checked" >
+                          <Checkbox>
+                            启用中频连发
+                          </Checkbox>
+                      </Form.Item>
+                    ) : <Form.Item name="continuousTransceiveEnable" valuePropName="checked" >
+                        <Checkbox disabled={true} checked={false}>
+                          启用中频连发
+                        </Checkbox>
+                      </Form.Item>
+                )
+                }
               </Form.Item>
             </Col>
             <Col xl={{ span: 4 }} lg={{ span: 4 }} md={{ span: 12 }} sm={24}>
@@ -287,9 +312,20 @@ const AdvancedForm: FC<AdvancedFormProps> = ({ configForm, submitting, getting, 
               </Form.Item>
             </Col>
             <Col xl={{ span: 4 }} lg={{ span: 4 }} md={{ span: 12 }} sm={24}>
-              <Form.Item name="impulseEnable" valuePropName="checked">
-                <Checkbox disabled={role == 1}>使能冲激响应</Checkbox>
+              <Form.Item shouldUpdate>
+                {({ getFieldValue }) => (
+                    getFieldValue('role') !== 1 ? (
+                        <Form.Item name="impulseEnable" valuePropName="checked">
+                          <Checkbox>使能冲激响应</Checkbox>
+                        </Form.Item>
+                      ) : <Form.Item name="impulseEnable" valuePropName="checked" >
+                          <Checkbox disabled={true} checked={false}>
+                            使能冲激响应
+                          </Checkbox>
+                        </Form.Item>
+                  )}
               </Form.Item>
+
             </Col>
             <Col xl={{ span: 4 }} lg={{ span: 4 }} md={{ span: 12 }} sm={24}>
               <Form.Item name="bitErrorEnable" valuePropName="checked">

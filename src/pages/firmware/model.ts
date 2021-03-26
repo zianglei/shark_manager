@@ -49,8 +49,8 @@ let uploadFirmware = ({payload, uploadFunc}, {call}) => {
                 if (!error) {
                     if (offset + chunkSize >= file.size) {
                         console.log(offset, chunkSize, offset + chunkSize, file.size);
+                        syncFirmwareService()
                         onSuccess(file);
-                        syncFirmwareService();
                     } else {
                         onProgress({ percent: ((offset + chunkSize) / file.size) * 100}, file);
                         sendChunk(offset + chunkSize);
