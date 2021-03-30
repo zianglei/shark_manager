@@ -50,7 +50,7 @@ const IntroduceRow = ({ loading, temperature, packetSent, packetRecv, packetErr 
         title={
           <FormattedMessage id="dashboardandanalysis.analysis.packet-sent" defaultMessage="发送报文个数" />
         }
-        value={packetSent}
+        value={numeral(packetSent).format('0,0')}
       >
       </NumberInfo>
     </Col>

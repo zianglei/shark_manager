@@ -13,10 +13,11 @@ import { AnalysisData } from './data.d';
 import styles from './style.less';
 
 const IntroduceRow = React.lazy(() => import('./components/IntroduceRow'));
-const SalesCard = React.lazy(() => import('./components/SalesCard'));
-const TopSearch = React.lazy(() => import('./components/TopSearch'));
-const ProportionSales = React.lazy(() => import('./components/ProportionSales'));
-const OfflineData = React.lazy(() => import('./components/OfflineData'));
+const SbandDataDiagram = React.lazy(() => import('./components/SbandDataDiagram'))
+// const SalesCard = React.lazy(() => import('./components/SalesCard'));
+// const TopSearch = React.lazy(() => import('./components/TopSearch'));
+// const ProportionSales = React.lazy(() => import('./components/ProportionSales'));
+// const OfflineData = React.lazy(() => import('./components/OfflineData'));
 
 type RangePickerValue = RangePickerProps<moment.Moment>['value'];
 
@@ -34,6 +35,8 @@ interface AnalysisState {
   packetSent: number,
   packetRecv: number;
   packetErr: number;
+  sbandSpeedData: {x: string, y: number}[];
+  sbandErrorBitrateData: {x: string, y: number}[];
 }
 
 class Analysis extends Component<AnalysisProps, AnalysisState> {
@@ -45,10 +48,14 @@ class Analysis extends Component<AnalysisProps, AnalysisState> {
     packetSent: 0,
     packetRecv: 0,
     packetErr: 0,
+    sbandSpeedData: [],
+    sbandErrorBitrateData: []
   };
 
   url: string = 'ws://' + window.location.host + '/data';
+  // url: string = 'ws://10.211.55.11:8888' + '/data'; 
   ws: WebSocket = new WebSocket(this.url);
+
 
   reqRef: number = 0;
 
@@ -64,6 +71,31 @@ class Analysis extends Component<AnalysisProps, AnalysisState> {
     this.ws.onmessage = (ev) => {
       const dataJson = JSON.parse(ev.data);
       console.log(dataJson);
+
+      const sbandSpeed = {
+        x: moment(new Date().getTime()).format("h:mm:ss"),
+        y: dataJson.sbandSpeed
+      }
+
+      const sbandErrorBitrate = {
+        x: moment(new Date().getTime()).format("h:mm:ss"),
+        y: dataJson.sbandErrorBitrate
+      }
+
+      if (this.state.sbandSpeedData.length >= 50) {
+        this.state.sbandSpeedData.shift();
+        this.state.sbandSpeedData.push(sbandSpeed)
+      } else {
+        this.state.sbandSpeedData.push(sbandSpeed);
+      }
+
+      if (this.state.sbandErrorBitrateData.length >= 50) {
+        this.state.sbandErrorBitrateData.shift();
+        this.state.sbandErrorBitrateData.push(sbandErrorBitrate);
+      } else {
+        this.state.sbandErrorBitrateData.push(sbandErrorBitrate);
+      }
+      
       this.setState({
         packetSent: dataJson.packetSent,
         packetRecv: dataJson.packetRecv,
@@ -159,26 +191,6 @@ class Analysis extends Component<AnalysisProps, AnalysisState> {
       salesTypeDataOnline,
       salesTypeDataOffline,
     } = dashboardAndanalysis;
-    let salesPieData;
-    if (salesType === 'all') {
-      salesPieData = salesTypeData;
-    } else {
-      salesPieData = salesType === 'online' ? salesTypeDataOnline : salesTypeDataOffline;
-    }
-    const menu = (
-      <Menu>
-        <Menu.Item>操作一</Menu.Item>
-        <Menu.Item>操作二</Menu.Item>
-      </Menu>
-    );
-
-    const dropdownGroup = (
-      <span className={styles.iconGroup}>
-        <Dropdown overlay={menu} placement="bottomRight">
-          <EllipsisOutlined />
-        </Dropdown>
-      </span>
-    );
 
     const activeKey = currentTabKey || (offlineData[0] && offlineData[0].name);
     return (
@@ -192,6 +204,9 @@ class Analysis extends Component<AnalysisProps, AnalysisState> {
               packetRecv={this.state.packetRecv}
               packetErr={this.state.packetErr}
             />
+            <SbandDataDiagram 
+              sbandSpeedData={this.state.sbandSpeedData}
+              sbandErrorBitrateData={this.state.sbandErrorBitrateData}/>
           </Suspense>
           {/* <Suspense fallback={null}>
             <SalesCard
