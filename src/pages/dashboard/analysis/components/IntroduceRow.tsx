@@ -21,10 +21,10 @@ const topColResponsiveProps = {
   style: { marginBottom: 24 },
 };
 
-const IntroduceRow = ({ loading, temperature, packetSent, packetRecv, packetErr }: 
+const IntroduceRow = ({ loading, temperature, packetSent, packetRecv, packetErr}: 
     { loading: boolean; 
       temperature: number; 
-      packetSent: number; 
+      packetSent: number;
       packetRecv: number;
       packetErr: number
     }) => (

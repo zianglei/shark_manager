@@ -19,12 +19,11 @@ const SbandDataDiagram = React.lazy(() => import('./components/SbandDataDiagram'
 // const ProportionSales = React.lazy(() => import('./components/ProportionSales'));
 // const OfflineData = React.lazy(() => import('./components/OfflineData'));
 
-type RangePickerValue = RangePickerProps<moment.Moment>['value'];
-
 interface AnalysisProps {
   dashboardAndanalysis: AnalysisData;
   dispatch: Dispatch<any>;
   loading: boolean;
+  role: number;
 }
 
 interface AnalysisState {
@@ -49,7 +48,7 @@ class Analysis extends Component<AnalysisProps, AnalysisState> {
     packetRecv: 0,
     packetErr: 0,
     sbandSpeedData: [],
-    sbandErrorBitrateData: []
+    sbandErrorBitrateData: [],
   };
 
   url: string = 'ws://' + window.location.host + '/data';
@@ -74,7 +73,7 @@ class Analysis extends Component<AnalysisProps, AnalysisState> {
 
       const sbandSpeed = {
         x: moment(new Date().getTime()).format("h:mm:ss"),
-        y: dataJson.sbandSpeed
+        y: this.props.role === 2 ? dataJson.sbandRecvData : dataJson.sbandSendData,
       }
 
       const sbandErrorBitrate = {
@@ -97,6 +96,7 @@ class Analysis extends Component<AnalysisProps, AnalysisState> {
       }
       
       this.setState({
+        temperature: dataJson.temperature,
         packetSent: dataJson.packetSent,
         packetRecv: dataJson.packetRecv,
         packetErr: dataJson.packetErr,
@@ -205,6 +205,7 @@ class Analysis extends Component<AnalysisProps, AnalysisState> {
               packetErr={this.state.packetErr}
             />
             <SbandDataDiagram 
+              role = {this.props.role}
               sbandSpeedData={this.state.sbandSpeedData}
               sbandErrorBitrateData={this.state.sbandErrorBitrateData}/>
           </Suspense>
@@ -263,14 +264,17 @@ class Analysis extends Component<AnalysisProps, AnalysisState> {
 
 export default connect(
   ({
+    config,
     dashboardAndanalysis,
     loading,
   }: {
+    config: any
     dashboardAndanalysis: any;
     loading: {
       effects: { [key: string]: boolean };
     };
   }) => ({
+    role: config.currentRole,
     dashboardAndanalysis,
     loading: loading.effects['dashboardAndanalysis/fetch'],
   }),
