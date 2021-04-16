@@ -73,7 +73,7 @@ class Analysis extends Component<AnalysisProps, AnalysisState> {
 
       const sbandSpeed = {
         x: moment(new Date().getTime()).format("h:mm:ss"),
-        y: this.props.role === 2 ? dataJson.sbandRecvData : dataJson.sbandSendData,
+        y: this.props.role === 2 ? dataJson.sbandRecvSpeed : dataJson.sbandSendSpeed,
       }
 
       const sbandErrorBitrate = {
