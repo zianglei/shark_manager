@@ -2,7 +2,7 @@ import { Effect, Reducer } from 'umi';
 import { message } from 'antd';
 import { uploadZynqService, uploadUltrascaleService} from './service';
 import { downloadLogService, downloadImpulseService} from './service';
-import { restartDeviceService, restartProgramService, syncFirmwareService} from './service'; 
+import { restartDeviceService, restartProgramService, stopProgramService, syncFirmwareService} from './service'; 
 import { getConfigRequest} from '../form/advanced-form/service';
 
 export interface StateType {
@@ -27,6 +27,7 @@ export interface ModelType {
         downloadLog: Effect;
         downloadImpulse: Effect;
         restartProgram: Effect;
+        stopProgram: Effect;
         restartDevice: Effect;
     }
 }
@@ -129,6 +130,15 @@ const Model: ModelType = {
                 message.error("重启失败")
             } else {
                 message.success("重启成功");
+            }
+        },
+
+        *stopProgram(_, {call}) {
+            const {error} = yield call(stopProgramService);
+            if (error) {
+                message.error("停止程序失败");
+            } else {
+                message.success("已停止服务");
             }
         },
 

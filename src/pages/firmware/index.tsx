@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState } from 'react'
 import { connect } from 'umi';
 import { Upload, Card, Button, Row, Col, message, Spin} from 'antd';
 import { PageContainer } from '@ant-design/pro-layout';
-import { UploadOutlined, DownloadOutlined, SyncOutlined } from '@ant-design/icons';
+import { UploadOutlined, DownloadOutlined, SyncOutlined, PauseOutlined} from '@ant-design/icons';
 import { StateType } from './model'
 
 interface FirmwareProps {
@@ -110,7 +110,7 @@ const Firmware: FC<FirmwareProps> = ({firmware, dispatch}) => {
                     </Row>
                     <Row>
                         <Col>
-                            <Button icon={<DownloadOutlined />} onClick={() => {
+                            <Button icon={<PauseOutlined />} onClick={() => {
                                 dispatch({
                                     type: "firmware/downloadImpulse"
                                 });
@@ -126,6 +126,13 @@ const Firmware: FC<FirmwareProps> = ({firmware, dispatch}) => {
                                     type: "firmware/restartProgram"
                                 });
                             }}>重启控制程序</Button> 
+                        </Col>
+                        <Col>
+                            <Button icon={<SyncOutlined />} onClick={() => {
+                                dispatch({
+                                    type: "firmware/stopProgram"
+                                })
+                            }}>停止控制程序</Button>
                         </Col>
                     </Row>
                     <Row>

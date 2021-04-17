@@ -53,9 +53,11 @@ const Model: ModelType = {
   state: {},
 
   reducers: {
-    loadConfig(state, { payload }) {
+    loadConfig(state, {payload}) {
+      console.log(payload);
       return {
-        ...payload
+        ...payload,
+        state
       }
     }
   },

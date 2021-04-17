@@ -10,6 +10,7 @@ import AngleBeamForm from './components/AngleBeamForm';
 import styles from './style.less';
 import { ConfigData } from './model'
 import BoardOption from './components/BoardOption';
+import { fromPairs } from 'lodash';
 
 type InternalNamePath = (string | number)[];
 
@@ -157,12 +158,102 @@ const AdvancedForm: FC<AdvancedFormProps> = ({ configForm, submitting, getting, 
   };
 
   const onFormValueChange = (changedValues, allValues) => {
+
+    const setSenderToSelf = () => {
+      console.log("Called setSenderToSelf, address", allValues["address"]);
+      const address = allValues["address"];
+      const slots = [
+        {
+          key: 1, 
+          sender: address,
+          receiver: 0
+        },
+        {
+          key: 2, 
+          sender: address,
+          receiver: 0 
+        },
+        {
+          key: 3, 
+          sender: address,
+          receiver: 0, 
+        },
+        {
+          key: 4, 
+          sender: address,
+          receiver: 0, 
+        },
+        {
+          key: 5, 
+          sender: address,
+          receiver: 0 
+        },
+      ];
+      dispatch({
+        type: 'configForm/loadConfig',
+        payload: {slots}
+      })
+    }
+
+    const setReceiverToSelf = () => {
+      const address = allValues["address"];
+      const slots = [
+        {
+          key: 1, 
+          sender: 0,
+          receiver: address
+        },
+        {
+          key: 2, 
+          sender: 0,
+          receiver: address 
+        },
+        {
+          key: 3, 
+          sender: 0,
+          receiver: address
+        },
+        {
+          key: 4, 
+          sender: 0,
+          receiver: address 
+        },
+        {
+          key: 5, 
+          sender: 0,
+          receiver: address
+        },
+      ];
+      dispatch({
+        type: 'configForm/loadConfig',
+        payload: {slots}
+      })
+    }
+
     // console.log(form.getFieldValue("role"));
     if ("role" in changedValues) {
+      console.log(allValues["mode"]);
+      if (allValues["mode"] == 3) {
+        if (changedValues["role"] == 1) {
+          setSenderToSelf();
+        } else if (changedValues["role"] == 2) {
+          setReceiverToSelf();
+        }
+      }
       if (changedValues["role"] !== 1) {
         form.setFieldsValue({continuousTransceiveEnable: 0})
       } else {
         form.setFieldsValue({impulseEnable: 0})
+      }
+    } else if ("mode" in changedValues) {
+      // 修改模式之后，判断当前模式是否是报文测试，如果是报文测试，根据发送还是接收修改对应的时隙信息
+      if (changedValues["mode"] == 3) {
+        if (allValues["role"] == 1) {
+          // 单向发送
+          setSenderToSelf();
+        } else if (allValues["mode"] == 2) {
+          setReceiverToSelf();
+        }
       }
     }
   }

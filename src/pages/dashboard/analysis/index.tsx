@@ -1,9 +1,7 @@
-import { EllipsisOutlined } from '@ant-design/icons';
-import { Col, Dropdown, Menu, message, Row } from 'antd';
+import { Col, Row, Progress } from 'antd';
 import React, { Component, Suspense } from 'react';
 import { GridContent } from '@ant-design/pro-layout';
 import { RadioChangeEvent } from 'antd/es/radio';
-import { RangePickerProps } from 'antd/es/date-picker/generatePicker';
 import moment from 'moment';
 import { connect, Dispatch } from 'umi';
 
@@ -11,6 +9,8 @@ import PageLoading from './components/PageLoading';
 import { getTimeDistance } from './utils/utils';
 import { AnalysisData } from './data.d';
 import styles from './style.less';
+import { ChartCard } from './components/Charts';
+import { SelectOutlined } from '@ant-design/icons';
 
 const IntroduceRow = React.lazy(() => import('./components/IntroduceRow'));
 const SbandDataDiagram = React.lazy(() => import('./components/SbandDataDiagram'))
@@ -18,6 +18,21 @@ const SbandDataDiagram = React.lazy(() => import('./components/SbandDataDiagram'
 // const TopSearch = React.lazy(() => import('./components/TopSearch'));
 // const ProportionSales = React.lazy(() => import('./components/ProportionSales'));
 // const OfflineData = React.lazy(() => import('./components/OfflineData'));
+
+const pinWaitingMsg = [
+  "等待LMX2592初始化",
+  "等待HMC7043启动初始化",
+  "等待HMC7043部分初始化",
+  "等待Aurora Ready",
+  "等待AD6688_1初始化",
+  "等待AD6688_2初始化",
+  "等待AD9163_1初始化",
+  "等待AD9163_2初始化",
+  "等待Ultrascale Aurora Lane Up",
+  "等待Ultrascale Aurora Channel Up",
+  "初始化完成"
+];
+
 
 interface AnalysisProps {
   dashboardAndanalysis: AnalysisData;
@@ -27,9 +42,7 @@ interface AnalysisProps {
 }
 
 interface AnalysisState {
-  salesType: 'all' | 'online' | 'stores';
-  currentTabKey: string;
-  rangePickerValue: RangePickerValue;
+  pinState: number;
   temperature: number;
   packetSent: number,
   packetRecv: number;
@@ -40,9 +53,7 @@ interface AnalysisState {
 
 class Analysis extends Component<AnalysisProps, AnalysisState> {
   state: AnalysisState = {
-    salesType: 'all',
-    currentTabKey: '',
-    rangePickerValue: getTimeDistance('year'),
+    pinState: 0,
     temperature: 0.0,
     packetSent: 0,
     packetRecv: 0,
@@ -96,6 +107,7 @@ class Analysis extends Component<AnalysisProps, AnalysisState> {
       }
       
       this.setState({
+        pinState : dataJson.pinState,
         temperature: dataJson.temperature,
         packetSent: dataJson.packetSent,
         packetRecv: dataJson.packetRecv,
@@ -122,81 +134,24 @@ class Analysis extends Component<AnalysisProps, AnalysisState> {
     this.ws.close();
   }
 
-  handleChangeSalesType = (e: RadioChangeEvent) => {
-    this.setState({
-      salesType: e.target.value,
-    });
-  };
-
-  handleTabChange = (key: string) => {
-    this.setState({
-      currentTabKey: key,
-    });
-  };
-
-  handleRangePickerChange = (rangePickerValue: RangePickerValue) => {
-    const { dispatch } = this.props;
-    this.setState({
-      rangePickerValue,
-    });
-
-    dispatch({
-      type: 'dashboardAndanalysis/fetchSalesData',
-    });
-  };
-
-  selectDate = (type: 'today' | 'week' | 'month' | 'year') => {
-    const { dispatch } = this.props;
-    this.setState({
-      rangePickerValue: getTimeDistance(type),
-    });
-
-    dispatch({
-      type: 'dashboardAndanalysis/fetchSalesData',
-    });
-  };
-
-  isActive = (type: 'today' | 'week' | 'month' | 'year') => {
-    const { rangePickerValue } = this.state;
-    if (!rangePickerValue) {
-      return '';
-    }
-    const value = getTimeDistance(type);
-    if (!value) {
-      return '';
-    }
-    if (!rangePickerValue[0] || !rangePickerValue[1]) {
-      return '';
-    }
-    if (
-      rangePickerValue[0].isSame(value[0] as moment.Moment, 'day') &&
-      rangePickerValue[1].isSame(value[1] as moment.Moment, 'day')
-    ) {
-      return styles.currentDate;
-    }
-    return '';
-  };
-
   render() {
-    const { rangePickerValue, salesType, currentTabKey } = this.state;
-    const { dashboardAndanalysis, loading } = this.props;
-    const {
-      visitData,
-      visitData2,
-      salesData,
-      searchData,
-      offlineData,
-      offlineChartData,
-      salesTypeData,
-      salesTypeDataOnline,
-      salesTypeDataOffline,
-    } = dashboardAndanalysis;
+    const { loading } = this.props;
 
-    const activeKey = currentTabKey || (offlineData[0] && offlineData[0].name);
+
     return (
       <GridContent>
         <React.Fragment>
           <Suspense fallback={<PageLoading />}>
+            <Row gutter={24} type="flex">
+              <Col xs={24} style={{marginBottom: 24}}>
+                <ChartCard
+                title="引脚初始化状态"
+                total={pinWaitingMsg[this.state.pinState]}
+                contentHeight={32}>
+                <Progress strokeWidth={8} percent={this.state.pinState * 10}/>
+              </ChartCard>
+              </Col>
+            </Row>
             <IntroduceRow
               loading={loading}
               temperature={this.state.temperature}
