@@ -22,6 +22,7 @@ const fieldLabels = {
   mode: '模式',
   role: '角色',
   antennaMode: '天线波束',
+  antennaFreq: '天线频率',
   continuousTransceiveEnable: '启用中频连发',
   gpsEnable: '启用秒脉冲同步',
   costasEnable: '启用costa环路',
@@ -30,8 +31,8 @@ const fieldLabels = {
   bitErrorEnable: '启用误码率统计',
   checkGPIOEnable: '启用引脚状态检测',
   testPacketNum: '测试报文数量',
-  vbandAttenuation: 'V段衰减'
-
+  vbandSendAttenuation: '天线发射衰减',
+  vbandRecvAttenuation: '天线接收衰减',
 };
 
 const tableData = [
@@ -83,6 +84,15 @@ interface ErrorField {
   name: InternalNamePath;
   errors: string[];
 }
+
+const topColResponsiveProps = {
+  xs: 24,
+  sm: 12,
+  md: 12,
+  lg: 12,
+  xl: 6,
+  style: { marginBottom: 16},
+};
 
 const AdvancedForm: FC<AdvancedFormProps> = ({ configForm, submitting, getting, dispatch }) => {
   const [form] = Form.useForm();
@@ -292,8 +302,8 @@ const AdvancedForm: FC<AdvancedFormProps> = ({ configForm, submitting, getting, 
     >
       <PageContainer content="">
         <Card title="协议栈配置" className={styles.card} bordered={false}>
-          <Row gutter={16}>
-            <Col lg={{ span: 5}} md={12} sm={24}>
+          <Row gutter={24} type="flex">
+            <Col {...topColResponsiveProps}>
               <Form.Item
                 label={fieldLabels.address}
                 name="address"
@@ -306,7 +316,7 @@ const AdvancedForm: FC<AdvancedFormProps> = ({ configForm, submitting, getting, 
                 </Select>
               </Form.Item>
             </Col>
-            <Col xl={{ span: 5, offset: 1 }} lg={{ span: 4 }} md={{ span: 12 }} sm={24}>
+            <Col {...topColResponsiveProps}>
               <Form.Item
                 label={fieldLabels.mode}
                 name="mode"
@@ -320,7 +330,7 @@ const AdvancedForm: FC<AdvancedFormProps> = ({ configForm, submitting, getting, 
                 </Select>
               </Form.Item>
             </Col>
-            <Col xl={{ span: 5, offset: 1 }} lg={{ span: 4 }} md={{ span: 24 }} sm={24}>
+            <Col {...topColResponsiveProps}>
               <Form.Item
                 label={fieldLabels.role}
                 name="role"
@@ -333,21 +343,7 @@ const AdvancedForm: FC<AdvancedFormProps> = ({ configForm, submitting, getting, 
                 </Select>
               </Form.Item>
             </Col>
-            <Col xl={{ span: 5, offset: 1 }} lg={{ span: 4 }} md={{ span: 24 }} sm={24}>
-              <Form.Item
-                label={fieldLabels.antennaMode}
-                name="antennaMode"
-                rules={[{ required: true, message: '请选择天线模式' }]}
-              >
-                <Select placeholder="请选择天线模式">
-                  <Option value={1}>窄波束</Option>
-                  <Option value={2}>宽波束</Option>
-                </Select>
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row gutter={16}>
-            <Col xl={{ span: 5 }} lg={{ span: 4 }} md={{ span: 24 }} sm={24}>
+            <Col {...topColResponsiveProps}>
               <Form.Item
                 label={fieldLabels.testPacketNum}
                 name="testPacketNum"
@@ -360,29 +356,69 @@ const AdvancedForm: FC<AdvancedFormProps> = ({ configForm, submitting, getting, 
                 />
               </Form.Item>
             </Col>
-            <Col xl={{ span: 5, offset: 1 }} lg={{ span: 4 }} md={{ span: 24 }} sm={24}>
+          </Row>
+          <Row gutter={24} type="flex">
+            <Col {...topColResponsiveProps}>
+                  <Form.Item
+                    label={fieldLabels.antennaFreq}
+                    name="antennaFreq"
+                    rules={[{ required: true, message: '请输入天线频率' }]}
+                  >
+                    <InputNumber 
+                      placeholder="请输入天线频率" size="middle" step={1}
+                      value = {configForm.antennaFreq}
+                      style={{ width: '100%' }}
+                    />
+                  </Form.Item>
+              </Col>
+            <Col {...topColResponsiveProps}>
+                <Form.Item
+                  label={fieldLabels.antennaMode}
+                  name="antennaMode"
+                  rules={[{ required: true, message: '请选择天线模式' }]}
+                >
+                  <Select placeholder="请选择天线模式">
+                    <Option value={1}>窄波束</Option>
+                    <Option value={2}>宽波束</Option>
+                  </Select>
+                </Form.Item>
+            </Col>
+            <Col {...topColResponsiveProps}>
               <Form.Item
-                label={fieldLabels.vbandAttenuation}
-                name="vbandAttenuation"
+                label={fieldLabels.vbandSendAttenuation}
+                name="vbandSendAttenuation"
                 rules={[{ required: true, message: '请输入' }]}
               > 
                 <InputNumber 
-                  placeholder="请输入V段衰减" size="middle" step={1}
-                  value = {configForm.vbandAttenuation}
+                  placeholder="请输入天线发射衰减" size="middle" step={1}
+                  value = {configForm.vbandSendAttenuation}
                   style={{ width: '100%' }}
                 />
               </Form.Item>
             </Col>
+            <Col {...topColResponsiveProps}>
+              <Form.Item
+                label={fieldLabels.vbandRecvAttenuation}
+                name="vbandRecvAttenuation"
+                rules={[{ required: true, message: '请输入' }]}
+              > 
+                <InputNumber 
+                  placeholder="请输入天线接收衰减" size="middle" step={1}
+                  value = {configForm.vbandRecvAttenuation}
+                  style={{ width: '100%' }}
+                />
+              </Form.Item>
+            </Col> 
           </Row>
         </Card>
         <Card title="选项配置" className={styles.card} bordered={false}>
-          <Row gutter={16}>
-            <Col lg={4} md={12} sm={24}>
+          <Row gutter={24} type="flex">
+            <Col {...topColResponsiveProps}>
               <Form.Item name="bigAntennaEnable" valuePropName="checked">
                 <Checkbox>使能大天线</Checkbox>
               </Form.Item>
             </Col>
-            <Col xl={{ span: 4 }} lg={{ span: 4 }} md={{ span: 12 }} sm={24}>
+            <Col {...topColResponsiveProps}>
               <Form.Item 
                   shouldUpdate>
                 {({ getFieldValue }) => (
@@ -401,12 +437,12 @@ const AdvancedForm: FC<AdvancedFormProps> = ({ configForm, submitting, getting, 
                 }
               </Form.Item>
             </Col>
-            <Col xl={{ span: 4 }} lg={{ span: 4 }} md={{ span: 12 }} sm={24}>
+            <Col {...topColResponsiveProps}>
               <Form.Item name="costasLoopEnable" valuePropName="checked">
                 <Checkbox>使能costa环路</Checkbox>
               </Form.Item>
             </Col>
-            <Col xl={{ span: 4 }} lg={{ span: 4 }} md={{ span: 12 }} sm={24}>
+            <Col {...topColResponsiveProps}>
               <Form.Item shouldUpdate>
                 {({ getFieldValue }) => (
                     getFieldValue('role') !== 1 ? (
@@ -420,19 +456,25 @@ const AdvancedForm: FC<AdvancedFormProps> = ({ configForm, submitting, getting, 
                         </Form.Item>
                   )}
               </Form.Item>
-
             </Col>
-            <Col xl={{ span: 4 }} lg={{ span: 4 }} md={{ span: 12 }} sm={24}>
+          </Row>        
+          <Row gutter={24} type="flex">
+            <Col {...topColResponsiveProps}>
               <Form.Item name="bitErrorEnable" valuePropName="checked">
                 <Checkbox>使能误码率统计</Checkbox>
               </Form.Item>
             </Col>
-            <Col xl={{ span: 4 }} lg={{ span: 4 }} md={{ span: 12 }} sm={24}>
+            <Col {...topColResponsiveProps}>
               <Form.Item name="checkGPIOEnable" valuePropName="checked">
                 <Checkbox>使能引脚初始状态检测</Checkbox>
               </Form.Item>
             </Col>
-          </Row>        
+            <Col xl={{ span: 4 }} lg={{ span: 4 }} md={{ span: 12 }} sm={24}>
+              <Form.Item name="gpsEnable" valuePropName="checked">
+                <Checkbox>使能秒脉冲</Checkbox>
+              </Form.Item>
+            </Col>
+          </Row>
         </Card>
         <Card title="时隙管理" className={styles.card} bordered={false}>
           <Form.Item name="slots">

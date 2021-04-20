@@ -22,6 +22,7 @@ export interface ConfigData {
   mode: number,
   role: number,
   antennaMode: number,
+  antennaFreq: number,
   continuousTransceiveEnable: boolean,
   gpsEnable: boolean,
   costasEnable: boolean,
@@ -30,7 +31,8 @@ export interface ConfigData {
   bitErrorEnable: boolean,
   checkGPIOEnable: boolean,
   testPacketNum: number,
-  vbandAttenuation: number,
+  vbandSendAttenuation: number,
+  vbandRecvAttenuation: number,
   slots: SlotData[],
   angleBeams: AngleBeamData[]
 }
@@ -74,7 +76,8 @@ const Model: ModelType = {
         address: response.stack.address,
         mode: response.stack.mode,
         role: response.stack.role,
-        antennaMode: response.stack.antennaMode,
+        antennaMode: response.stack.antenna_mode,
+        antennaFreq: response.stack.antenna_freq,
         continuousTransceiveEnable: response.stack.continuous_transceive,
         gpsEnable: response.stack.gps_enable,
         costasEnable: response.stack.costas_loop_enable,
@@ -83,7 +86,8 @@ const Model: ModelType = {
         bitErrorEnable: response.stack.bit_err_count_enable,
         checkGPIOEnable: response.stack.check_fpga_enable,
         testPacketNum: response.test.packet_num,
-        vbandAttenuation: response.stack.vband_attenuation,
+        vbandSendAttenuation: response.stack.vband_send_attenuation,
+        vbandRecvAttenuation: response.stack.vband_recv_attenuation,
         // vband
         slots: [
           {

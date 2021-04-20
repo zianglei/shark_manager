@@ -18,7 +18,7 @@ type GAFieldsObject = {
   eventAction: string;
   eventLabel?: string;
   eventValue?: number;
-  nonInteraction?: boolean;
+nonInteraction?: boolean;
 };
 
 interface Window {

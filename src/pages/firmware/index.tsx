@@ -110,7 +110,7 @@ const Firmware: FC<FirmwareProps> = ({firmware, dispatch}) => {
                     </Row>
                     <Row>
                         <Col>
-                            <Button icon={<PauseOutlined />} onClick={() => {
+                            <Button icon={<DownloadOutlined />} onClick={() => {
                                 dispatch({
                                     type: "firmware/downloadImpulse"
                                 });
@@ -128,7 +128,7 @@ const Firmware: FC<FirmwareProps> = ({firmware, dispatch}) => {
                             }}>重启控制程序</Button> 
                         </Col>
                         <Col>
-                            <Button icon={<SyncOutlined />} onClick={() => {
+                            <Button icon={<PauseOutlined />} onClick={() => {
                                 dispatch({
                                     type: "firmware/stopProgram"
                                 })

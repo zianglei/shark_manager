@@ -14,13 +14,16 @@ export async function submitConfigRequest(payload: any) {
       "address": payload.address, 
       "mode": payload.mode, 
       "role": payload.role, 
-      "antennaMode": payload.antennaMode,
+      "antenna_mode": payload.antennaMode,
+      "antenna_freq": payload.antennaFreq,
       "big_antenna_enable": payload.bigAntennaEnable,
       "continuous_transceive": payload.continuousTransceiveEnable,
       "impulse_response_enable": payload.impulseEnable,
       "bit_err_count_enable": payload.bitErrorEnable,
       "check_fpga_enable": payload.checkGPIOEnable,
-      "vband_attenuation": payload.vbandAttenuation
+      "vband_send_attenuation": payload.vbandSendAttenuation,
+      "vband_recv_attenuation": payload.vbandRecvAttenuation,
+      "gps_enable": payload.gpsEnable,
     },
     "test": {
       "packet_num": payload.testPacketNum

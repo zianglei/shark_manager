@@ -36,6 +36,6 @@ export async function syncFirmwareService() {
 }
 
 export async function stopProgramService() {
-    return request.get('/api/firmware/restart/stopservice')
+    return request.get('/api/control/restart/stopservice')
         .catch((error) => ({error}));
 }
